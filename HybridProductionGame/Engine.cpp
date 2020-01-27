@@ -2,19 +2,20 @@
 #include <iostream>
 #define WIDTH 924
 #define HEIGHT 703
-#define PLAYER_WIDTH 61
-#define PLAYER_HEIGHT 46
 #define FPS 60
 using namespace std;
+
+//Player animation
+int angle = 0;
 
 //Engine::Engine():m_bRunning(false) // Class initializer list.
 //{ }
 Engine::Engine()
 {
-	m_bRunning = false; 
+	m_bRunning = false;
 	m_iSpeed = 5;
 }
-Engine::~Engine(){}
+Engine::~Engine() {}
 
 bool Engine::init(const char* title, int xpos, int ypos, int width, int height, int flags)
 {
@@ -32,7 +33,10 @@ bool Engine::init(const char* title, int xpos, int ypos, int width, int height, 
 				if (IMG_Init(IMG_INIT_PNG))
 				{
 					m_pTexture_bg = IMG_LoadTexture(m_pRenderer, "bg.png");
-					m_pTexture = IMG_LoadTexture(m_pRenderer, "player.png");
+					//Player shtuff
+					m_pTexturePR = IMG_LoadTexture(m_pRenderer, "playerRight.png");
+
+
 				}
 				else return false; // Init init fail.
 			}
@@ -44,7 +48,7 @@ bool Engine::init(const char* title, int xpos, int ypos, int width, int height, 
 	m_fps = (Uint32)round((1 / (double)FPS) * 1000); // Sets FPS in milliseconds and rounds.
 	m_iKeystates = SDL_GetKeyboardState(nullptr);
 	// Create the sprite.
-	m_pSrc = { 0, 0, PLAYER_WIDTH, PLAYER_HEIGHT };
+	m_pSrc = { 0, 0, 61, 46 };
 	m_pDst = { width / 2 - m_pSrc.w / 2 - 150, height / 2 - m_pSrc.h / 2, m_pSrc.w, m_pSrc.h };
 	m_bRunning = true; // Everything is okay, start the engine.
 	cout << "Success!" << endl;
@@ -94,20 +98,30 @@ void Engine::update()
 {
 	if ((keyDown(SDL_SCANCODE_W) || keyDown(SDL_SCANCODE_UP)) && m_pDst.y > m_iSpeed)
 	{
+		angle = 270;
 		m_pDst.y -= m_iSpeed;
 
 	}
 	if ((keyDown(SDL_SCANCODE_S) || keyDown(SDL_SCANCODE_DOWN)) && m_pDst.y < HEIGHT - m_pDst.h - m_iSpeed)
 	{
+		angle = 90;
 		m_pDst.y += m_iSpeed;
 		//cout << g_dst.y << " ";
 	}
 
 	if ((keyDown(SDL_SCANCODE_A) || keyDown(SDL_SCANCODE_LEFT)) && m_pDst.x > m_iSpeed)
+	{
+		angle = 180;
 		m_pDst.x -= m_iSpeed;
+	}
+
+
 	//if (keyDown(SDL_SCANCODE_D) && g_dst.x< WIDTH-g_dst.w- g_iSpeed)
 	if ((keyDown(SDL_SCANCODE_D) || keyDown(SDL_SCANCODE_RIGHT)) && m_pDst.x < WIDTH / 2 - m_pDst.w)
+	{
+		angle = 0;
 		m_pDst.x += m_iSpeed;
+	}
 }
 
 void Engine::render()
@@ -116,7 +130,8 @@ void Engine::render()
 	SDL_RenderClear(m_pRenderer); // Clear the screen with the draw color.
 	// Render stuff.
 	SDL_RenderCopy(m_pRenderer, m_pTexture_bg, NULL, NULL);
-	SDL_RenderCopy(m_pRenderer, m_pTexture, &m_pSrc, &m_pDst);// , 90, nullptr, SDL_FLIP_NONE);
+	SDL_RenderCopyEx(m_pRenderer, m_pTexturePR, &m_pSrc, &m_pDst, angle, nullptr, SDL_FLIP_NONE);
+
 	// Draw anew.
 	SDL_RenderPresent(m_pRenderer);
 }
@@ -124,7 +139,7 @@ void Engine::render()
 void Engine::clean()
 {
 	cout << "Cleaning game." << endl;
-	SDL_DestroyTexture(m_pTexture);
+	SDL_DestroyTexture(m_pTexturePR);
 	SDL_DestroyTexture(m_pTexture_bg);
 	SDL_DestroyRenderer(m_pRenderer);
 	SDL_DestroyWindow(m_pWindow);

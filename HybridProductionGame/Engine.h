@@ -17,7 +17,7 @@ private: // Properties.
 	SDL_Renderer* m_pRenderer; // This represents the buffer to draw to.
 	// New variables for sprite.
 	SDL_Rect m_pSrc, m_pDst;
-	SDL_Texture* m_pTexture;
+	SDL_Texture* m_pTexturePR;
 	SDL_Texture* m_pTexture_bg;
 private: // Methods.
 	bool init(const char*, int, int, int, int, int); // Parameter names are not needed in a function prototype.

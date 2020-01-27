@@ -2,6 +2,8 @@
 #include <iostream>
 #define WIDTH 924
 #define HEIGHT 703
+#define PLAYER_WIDTH 61
+#define PLAYER_HEIGHT 46
 #define FPS 60
 using namespace std;
 
@@ -42,7 +44,7 @@ bool Engine::init(const char* title, int xpos, int ypos, int width, int height, 
 	m_fps = (Uint32)round((1 / (double)FPS) * 1000); // Sets FPS in milliseconds and rounds.
 	m_iKeystates = SDL_GetKeyboardState(nullptr);
 	// Create the sprite.
-	m_pSrc = { 0, 0, 61, 46 };
+	m_pSrc = { 0, 0, PLAYER_WIDTH, PLAYER_HEIGHT };
 	m_pDst = { width / 2 - m_pSrc.w / 2 - 150, height / 2 - m_pSrc.h / 2, m_pSrc.w, m_pSrc.h };
 	m_bRunning = true; // Everything is okay, start the engine.
 	cout << "Success!" << endl;

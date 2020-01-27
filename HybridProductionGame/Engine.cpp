@@ -1,7 +1,7 @@
 #include "Engine.h"
 #include <iostream>
 #define WIDTH 924
-#define HEIGHT 903
+#define HEIGHT 703
 #define FPS 60
 using namespace std;
 

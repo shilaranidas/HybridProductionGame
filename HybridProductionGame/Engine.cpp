@@ -1,12 +1,9 @@
 #include "Engine.h"
 #include <iostream>
-#define WIDTH 924
-#define HEIGHT 703
-#define FPS 60
+
 using namespace std;
 
-//Player animation
-int angle = 0;
+
 
 //Engine::Engine():m_bRunning(false) // Class initializer list.
 //{ }
@@ -50,6 +47,8 @@ bool Engine::init(const char* title, int xpos, int ypos, int width, int height, 
 	// Create the sprite.
 	m_pSrc = { 0, 0, 61, 46 };
 	m_pDst = { width / 2 - m_pSrc.w / 2 - 150, height / 2 - m_pSrc.h / 2, m_pSrc.w, m_pSrc.h };
+	m_pFSM = new FSM(); // Creates the state machine object/instance.
+	m_pFSM->ChangeState(new TitleState()); // Invoking the ChangeState method to set the initial state, Title.
 	m_bRunning = true; // Everything is okay, start the engine.
 	cout << "Success!" << endl;
 	return true;
@@ -77,12 +76,23 @@ void Engine::handleEvents()
 			if (event.key.keysym.sym == SDLK_ESCAPE)
 				m_bRunning = false;
 			break;
+		case SDL_MOUSEBUTTONDOWN:
+			if (event.button.button >= 1 && event.button.button <= 3)
+				m_MouseState[event.button.button - 1] = true;
+			break;
+		case SDL_MOUSEBUTTONUP:
+			if (event.button.button >= 1 && event.button.button <= 3)
+				m_MouseState[event.button.button - 1] = false;
+			break;
+		case SDL_MOUSEMOTION:
+			SDL_GetMouseState(&m_MousePos.x, &m_MousePos.y);
+			break;
 		}
 	}
 }
 
 // Keyboard utility function.
-bool Engine::keyDown(SDL_Scancode c)
+bool Engine::KeyDown(SDL_Scancode c)
 {
 	if (m_iKeystates != nullptr)
 	{
@@ -96,44 +106,15 @@ bool Engine::keyDown(SDL_Scancode c)
 
 void Engine::update()
 {
-	if ((keyDown(SDL_SCANCODE_W) || keyDown(SDL_SCANCODE_UP)) && m_pDst.y > m_iSpeed)
-	{
-		angle = 270;
-		m_pDst.y -= m_iSpeed;
-
-	}
-	if ((keyDown(SDL_SCANCODE_S) || keyDown(SDL_SCANCODE_DOWN)) && m_pDst.y < HEIGHT - m_pDst.h - m_iSpeed)
-	{
-		angle = 90;
-		m_pDst.y += m_iSpeed;
-		//cout << g_dst.y << " ";
-	}
-
-	if ((keyDown(SDL_SCANCODE_A) || keyDown(SDL_SCANCODE_LEFT)) && m_pDst.x > m_iSpeed)
-	{
-		angle = 180;
-		m_pDst.x -= m_iSpeed;
-	}
-
-
-	//if (keyDown(SDL_SCANCODE_D) && g_dst.x< WIDTH-g_dst.w- g_iSpeed)
-	if ((keyDown(SDL_SCANCODE_D) || keyDown(SDL_SCANCODE_RIGHT)) && m_pDst.x < WIDTH / 2 - m_pDst.w)
-	{
-		angle = 0;
-		m_pDst.x += m_iSpeed;
-	}
+	
+	
+	GetFSM().Update(); // Invokes the update of the state machine.
 }
 
 void Engine::render()
 {
-	SDL_SetRenderDrawColor(m_pRenderer, 0, 0, 0, 255);
-	SDL_RenderClear(m_pRenderer); // Clear the screen with the draw color.
-	// Render stuff.
-	SDL_RenderCopy(m_pRenderer, m_pTexture_bg, NULL, NULL);
-	SDL_RenderCopyEx(m_pRenderer, m_pTexturePR, &m_pSrc, &m_pDst, angle, nullptr, SDL_FLIP_NONE);
-
-	// Draw anew.
-	SDL_RenderPresent(m_pRenderer);
+	
+	GetFSM().Render(); // Invokes the render of the state machine.
 }
 
 void Engine::clean()
@@ -141,6 +122,7 @@ void Engine::clean()
 	cout << "Cleaning game." << endl;
 	SDL_DestroyTexture(m_pTexturePR);
 	SDL_DestroyTexture(m_pTexture_bg);
+	GetFSM().Clean();
 	SDL_DestroyRenderer(m_pRenderer);
 	SDL_DestroyWindow(m_pWindow);
 	SDL_Quit();
@@ -161,4 +143,63 @@ int Engine::run()
 	}
 	clean();
 	return 0;
+}
+Engine& Engine::Instance()
+{
+	static Engine instance; // C++11 will prevent this line from running more than once. Magic statics.
+	return instance;
+}
+SDL_Renderer* Engine::GetRenderer() { return m_pRenderer; }
+
+FSM& Engine::GetFSM() { return *m_pFSM; }
+
+SDL_Point& Engine::GetMousePos() { return m_MousePos; }
+
+bool Engine::GetMouseState(int idx) { return m_MouseState[idx]; }
+
+void Engine::QuitGame() { m_bRunning = false; }
+
+SDL_Rect* Engine::getDst()
+{
+	return &m_pDst;
+}
+
+//void Engine::setDst(SDL_Rect& newDst)
+//{
+//	m_pDst = newDst;
+//}
+
+SDL_Rect* Engine::getSrc()
+{
+	return &m_pSrc;
+}
+
+//void Engine::setSrc(SDL_Rect& newSrc)
+//{
+//	m_pSrc = newSrc;
+//}
+
+SDL_Texture* Engine::getTexturePR()
+{
+	return m_pTexturePR;
+}
+
+SDL_Texture* Engine::getTexture_bg()
+{
+	return m_pTexture_bg;
+}
+
+int Engine::getAngle()
+{
+	return angle;
+}
+
+void Engine::setAngle(int newAngle)
+{
+	angle = newAngle;
+}
+
+int Engine::getSpeed()
+{
+	return m_iSpeed;
 }

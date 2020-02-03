@@ -2,6 +2,5 @@
 
 int main(int argc, char* args[]) // Main MUST have these parameters for SDL.
 {
-	Engine e; // This line will be removed by the Singleton pattern.
-	return e.run();
+	return Engine::Instance().run(); // Invokes Run() of the engine and stays in the function until engine is done.
 }

@@ -18,9 +18,9 @@ PauseState::PauseState() {}
 void PauseState::Enter()
 {
 	cout << "Entering Pause..." << endl;
-	m_vButtons.push_back(new Button("resume.png", { 0,0,200,80 }, { 412,200,200,80 },
+	m_vButtons.push_back(new Button("resume.png", { 0,0,200,100 }, { 412,200,200,100 },
 		std::bind( &FSM::PopState, &Engine::Instance().GetFSM() )));
-	m_vButtons.push_back(new Button("exit.png", { 0,0,400,100 }, { 412,400,200,80 },
+	m_vButtons.push_back(new Button("exit.png", { 0,0,200,100 }, { 412,400,200,100 },
 		std::bind( &Engine::QuitGame, &Engine::Instance())) );
 }
 
@@ -35,7 +35,7 @@ void PauseState::Render()
 	cout << "Rendering Pause..." << endl;
 	Engine::Instance().GetFSM().GetStates().front()->Render();
 	SDL_SetRenderDrawBlendMode(Engine::Instance().GetRenderer(), SDL_BLENDMODE_BLEND);
-	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 0, 255, 128);
+	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 71, 57, 74, 250);
 	SDL_Rect rect = { 256, 128, 512, 512 };
 	SDL_RenderFillRect(Engine::Instance().GetRenderer(), &rect);
 	for (int i = 0; i < (int)m_vButtons.size(); i++)
@@ -94,7 +94,7 @@ void GameState::Update()
 
 
 	//if (keyDown(SDL_SCANCODE_D) && g_dst.x< WIDTH-g_dst.w- g_iSpeed)
-	if ((Engine::Instance().KeyDown(SDL_SCANCODE_D) || Engine::Instance().KeyDown(SDL_SCANCODE_RIGHT)) && Engine::Instance().getDst()->x < WIDTH / 2 - Engine::Instance().getDst()->w)
+	if ((Engine::Instance().KeyDown(SDL_SCANCODE_D) || Engine::Instance().KeyDown(SDL_SCANCODE_RIGHT)) && Engine::Instance().getDst()->x < WIDTH - Engine::Instance().getDst()->w)
 	{
 		
 		Engine::Instance().setAngle(0);
@@ -135,10 +135,10 @@ TitleState::TitleState() {}
 void TitleState::Enter()
 { 
 	cout << "Entering Title..." << endl;
-	m_vButtons.push_back(new Button("button.png", { 0,0,400,100 }, { 312,100,400,100 },
+	m_vButtons.push_back(new Button("button.png", { 0,0,200,100 }, { 312,100,200,100 },
 		std::bind( &FSM::ChangeState, &Engine::Instance().GetFSM(), new GameState() )));
 	// For the bind: what function, what instance, any parameters.
-	m_vButtons.push_back(new Button("exit.png", { 0,0,400,100 }, { 312,300,400,100 },
+	m_vButtons.push_back(new Button("exit.png", { 0,0,200,100 }, { 312,300,200,100 },
 		std::bind( &Engine::QuitGame, &Engine::Instance() )));
 }
 
@@ -151,7 +151,7 @@ void TitleState::Update()
 void TitleState::Render()
 {
 	cout << "Rendering Title..." << endl;
-	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 255, 0, 0, 255);
+	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 71, 57, 74, 255);
 	SDL_RenderClear(Engine::Instance().GetRenderer());
 	for (int i = 0; i < (int)m_vButtons.size(); i++)
 		m_vButtons[i]->Render();

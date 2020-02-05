@@ -30,6 +30,7 @@ private: // Properties.
 	bool m_MouseState[3] = { 0,0,0 }; // Button up/down. Left, Middle, Right.
 	//Player animation
 	int angle = 0;
+	TTF_Font* m_Font;
 private: // Methods.
 	bool init(const char*, int, int, int, int, int); // Parameter names are not needed in a function prototype.
 	void wake(); // Function prototypes ARE statements, so don't forget the ';'

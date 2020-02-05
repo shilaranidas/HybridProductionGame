@@ -32,7 +32,11 @@ bool Engine::init(const char* title, int xpos, int ypos, int width, int height, 
 					m_pTexture_bg = IMG_LoadTexture(m_pRenderer, "bg.png");
 					//Player shtuff
 					m_pTexturePR = IMG_LoadTexture(m_pRenderer, "playerRight.png");
-
+					if (TTF_Init() == 0) // Font init success.
+					{
+						m_Font = TTF_OpenFont("aurora.TTF", 18); // 18 is our desired font size.
+					}
+					else return false; // Font init fail.
 
 				}
 				else return false; // Init init fail.

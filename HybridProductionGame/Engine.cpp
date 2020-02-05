@@ -131,7 +131,7 @@ void Engine::render()
 	// Render stuff.
 	SDL_RenderCopy(m_pRenderer, m_pTexture_bg, NULL, NULL);
 	SDL_RenderCopyEx(m_pRenderer, m_pTexturePR, &m_pSrc, &m_pDst, angle, nullptr, SDL_FLIP_NONE);
-	
+
 	// Draw anew.
 	SDL_RenderPresent(m_pRenderer);
 }

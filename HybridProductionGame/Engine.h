@@ -31,6 +31,9 @@ private: // Properties.
 	//Player animation
 	int angle = 0;
 	TTF_Font* m_Font;
+	SDL_Color m_cTextColor = { 255, 255, 255, 0 }; // White text.
+	SDL_Texture* m_pTitleText1;
+	SDL_Texture* m_pTitleText2;
 private: // Methods.
 	bool init(const char*, int, int, int, int, int); // Parameter names are not needed in a function prototype.
 	void wake(); // Function prototypes ARE statements, so don't forget the ';'
@@ -67,6 +70,12 @@ public:
 	int getAngle();
 	void setAngle(int newAngle);
 	int getSpeed();
+	TTF_Font* getFont();
+	SDL_Color getColor();
+	SDL_Texture* getFontTexture1();
+	SDL_Texture* getFontTexture2();
+	void setFontTexture1(SDL_Texture* newFontTexture1);
+	void setFontTexture2(SDL_Texture* newFontTexture2);
 	//void setSrc(SDL_Rect src);
 };
 

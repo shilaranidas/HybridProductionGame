@@ -126,6 +126,8 @@ void Engine::clean()
 	cout << "Cleaning game." << endl;
 	SDL_DestroyTexture(m_pTexturePR);
 	SDL_DestroyTexture(m_pTexture_bg);
+	SDL_DestroyTexture(m_pTitleText1);
+	SDL_DestroyTexture(m_pTitleText2);
 	GetFSM().Clean();
 	SDL_DestroyRenderer(m_pRenderer);
 	SDL_DestroyWindow(m_pWindow);
@@ -206,4 +208,32 @@ void Engine::setAngle(int newAngle)
 int Engine::getSpeed()
 {
 	return m_iSpeed;
+}
+
+TTF_Font* Engine::getFont()
+{
+	return m_Font;
+}
+
+SDL_Color Engine::getColor()
+{
+	return m_cTextColor;
+}
+
+SDL_Texture* Engine::getFontTexture1()
+{
+	return m_pTitleText1;
+}
+SDL_Texture* Engine::getFontTexture2()
+{
+	return m_pTitleText2;
+}
+
+void Engine::setFontTexture1(SDL_Texture* newFontTexture1)
+{
+	m_pTitleText1 = newFontTexture1;
+}
+void Engine::setFontTexture2(SDL_Texture* newFontTexture2)
+{
+	m_pTitleText2 = newFontTexture2;
 }

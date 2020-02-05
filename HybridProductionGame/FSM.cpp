@@ -32,7 +32,7 @@ void PauseState::Update()
 
 void PauseState::Render()
 {
-	cout << "Rendering Pause..." << endl;
+	//cout << "Rendering Pause..." << endl;
 	Engine::Instance().GetFSM().GetStates().front()->Render();
 	SDL_SetRenderDrawBlendMode(Engine::Instance().GetRenderer(), SDL_BLENDMODE_BLEND);
 	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 71, 57, 74, 250);
@@ -105,7 +105,7 @@ void GameState::Update()
 
 void GameState::Render()
 {
-	cout << "Rendering Game..." << endl;
+	//cout << "Rendering Game..." << endl;
 	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 0, 0, 255);
 	SDL_RenderClear(Engine::Instance().GetRenderer());
 	// Render stuff.
@@ -135,10 +135,10 @@ TitleState::TitleState() {}
 void TitleState::Enter()
 { 
 	cout << "Entering Title..." << endl;
-	m_vButtons.push_back(new Button("button.png", { 0,0,200,100 }, { 312,100,200,100 },
+	m_vButtons.push_back(new Button("button.png", { 0,0,200,100 }, { (WIDTH/2)-100,250,200,100 },
 		std::bind( &FSM::ChangeState, &Engine::Instance().GetFSM(), new GameState() )));
 	// For the bind: what function, what instance, any parameters.
-	m_vButtons.push_back(new Button("exit.png", { 0,0,200,100 }, { 312,300,200,100 },
+	m_vButtons.push_back(new Button("exit.png", { 0,0,200,100 }, { (WIDTH / 2) - 100,400,200,100 },
 		std::bind( &Engine::QuitGame, &Engine::Instance() )));
 }
 
@@ -150,11 +150,25 @@ void TitleState::Update()
 
 void TitleState::Render()
 {
-	cout << "Rendering Title..." << endl;
+	//cout << "Rendering Title..." << endl;
 	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 71, 57, 74, 255);
 	SDL_RenderClear(Engine::Instance().GetRenderer());
 	for (int i = 0; i < (int)m_vButtons.size(); i++)
 		m_vButtons[i]->Render();
+	string title1 = "WELCOME TO";
+	string title2 = "ALONE";
+	SDL_Surface* titleSurf1 = TTF_RenderText_Solid(Engine::Instance().getFont(), title1.c_str(), Engine::Instance().getColor());
+	SDL_Surface* titleSurf2 = TTF_RenderText_Solid(Engine::Instance().getFont(), title2.c_str(), Engine::Instance().getColor());
+	SDL_Texture* titleText1 = SDL_CreateTextureFromSurface(Engine::Instance().GetRenderer(), titleSurf1);
+	SDL_Texture* titleText2 = SDL_CreateTextureFromSurface(Engine::Instance().GetRenderer(), titleSurf2);
+	Engine::Instance().setFontTexture1(titleText1);
+	Engine::Instance().setFontTexture2(titleText2);
+	SDL_Rect titleRect1= { WIDTH/2-(titleSurf1->w * 1.5f), 30, titleSurf1->w*3, titleSurf1->h*3 };
+	SDL_Rect titleRect2 = {WIDTH / 2 - (titleSurf2->w * 1.5f), 130, titleSurf2->w * 3, titleSurf2->h * 3 };
+	SDL_RenderCopy(Engine::Instance().GetRenderer(), titleText1, 0, &titleRect1);
+	SDL_RenderCopy(Engine::Instance().GetRenderer(), titleText2, 0, &titleRect2);
+	SDL_FreeSurface(titleSurf1);
+	SDL_FreeSurface(titleSurf2);
 	State::Render();
 }
 

@@ -34,6 +34,9 @@ private: // Properties.
 	SDL_Color m_cTextColor = { 255, 255, 255, 0 }; // White text.
 	SDL_Texture* m_pTitleText1;
 	SDL_Texture* m_pTitleText2;
+	// Audio members.
+	Mix_Chunk* m_mPlayerBullet;	
+	Mix_Music* m_mBgMusic;
 private: // Methods.
 	bool init(const char*, int, int, int, int, int); // Parameter names are not needed in a function prototype.
 	void wake(); // Function prototypes ARE statements, so don't forget the ';'

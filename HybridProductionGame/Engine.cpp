@@ -32,6 +32,26 @@ bool Engine::init(const char* title, int xpos, int ypos, int width, int height, 
 					m_pTexture_bg = IMG_LoadTexture(m_pRenderer, "bg.png");
 					//Player shtuff
 					m_pTexturePR = IMG_LoadTexture(m_pRenderer, "playerRight.png");
+					//sound init
+					if (Mix_Init(MIX_INIT_MP3) != 0) // Mixer init success.
+					{
+						Mix_OpenAudio(22050, AUDIO_S16SYS, 2, 2048);
+						Mix_AllocateChannels(16);
+						m_mPlayerBullet = Mix_LoadWAV("Fire.wav");
+						
+						m_mBgMusic = Mix_LoadMUS("bg.mp3");
+						Mix_VolumeChunk(m_mPlayerBullet, 25);
+						
+						Mix_VolumeMusic(32);
+						if (TTF_Init() == 0) // Font init success.
+						{
+							m_Font = TTF_OpenFont("LTYPE.TTF", 18); // 18 is our desired font size.
+						}
+						else return false; // Font init fail.
+					}
+					else return false; // Mixer init fail.
+
+
 					if (TTF_Init() == 0) // Font init success.
 					{
 						m_Font = TTF_OpenFont("aurora.TTF", 18); // 18 is our desired font size.
@@ -53,6 +73,8 @@ bool Engine::init(const char* title, int xpos, int ypos, int width, int height, 
 	m_pDst = { width / 2 - m_pSrc.w / 2 - 150, height / 2 - m_pSrc.h / 2, m_pSrc.w, m_pSrc.h };
 	m_pFSM = new FSM(); // Creates the state machine object/instance.
 	m_pFSM->ChangeState(new TitleState()); // Invoking the ChangeState method to set the initial state, Title.
+	//added background music
+	Mix_PlayMusic(m_mBgMusic, -1);
 	m_bRunning = true; // Everything is okay, start the engine.
 	cout << "Success!" << endl;
 	return true;

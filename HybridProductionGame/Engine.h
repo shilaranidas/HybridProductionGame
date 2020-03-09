@@ -36,7 +36,7 @@ private: // Properties.
 	SDL_Texture* m_pTitleText2;
 	// Audio members.
 	Mix_Chunk* m_mPlayerBullet;	
-	Mix_Music* m_mBgMusic;
+	
 private: // Methods.
 	bool init(const char*, int, int, int, int, int); // Parameter names are not needed in a function prototype.
 	void wake(); // Function prototypes ARE statements, so don't forget the ';'
@@ -53,6 +53,8 @@ private: // Methods.
 	void render();
 	void clean();
 public:
+	Mix_Music* m_mBgMusic;
+	Mix_Music* m_mBgMusicTitle;
 	Engine(); // Constructor.
 	~Engine();
 	int run();

@@ -46,6 +46,7 @@ void PauseState::Render()
 void PauseState::Exit()
 {
 	cout << "Exiting Pause..." << endl;
+	
 	for (int i = 0; i < (int)m_vButtons.size(); i++)
 	{
 		delete m_vButtons[i];
@@ -62,6 +63,8 @@ GameState::GameState() {}
 void GameState::Enter()
 { 
 	cout << "Entering Game..." << endl;
+	
+	Mix_PlayMusic(Engine::Instance().m_mBgMusic, -1);
 }
 
 void GameState::Update()
@@ -124,17 +127,23 @@ void GameState::Render()
 void GameState::Exit()
 { 
 	cout << "Exiting Game..." << endl;
+	Mix_FreeMusic(Engine::Instance().m_mBgMusic);
 }
 
 void GameState::Resume() { cout << "Resuming Game..." << endl; }
 // End GameState.
 
 // Begin TitleState.
-TitleState::TitleState() {}
+TitleState::TitleState() {
+
+}
 
 void TitleState::Enter()
 { 
 	cout << "Entering Title..." << endl;
+	//added background music
+	Mix_PlayMusic(Engine::Instance().m_mBgMusicTitle, -1);
+
 	m_vButtons.push_back(new Button("button.png", { 0,0,200,100 }, { (WIDTH/2)-100,250,200,100 },
 		std::bind( &FSM::ChangeState, &Engine::Instance().GetFSM(), new GameState() )));
 	// For the bind: what function, what instance, any parameters.
@@ -182,6 +191,7 @@ void TitleState::Exit()
 	}
 	m_vButtons.clear();
 	m_vButtons.shrink_to_fit();
+	Mix_FreeMusic(Engine::Instance().m_mBgMusicTitle);
 }
 // End TitleState.
 

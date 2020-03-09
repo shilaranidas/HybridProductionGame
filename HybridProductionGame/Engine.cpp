@@ -39,7 +39,8 @@ bool Engine::init(const char* title, int xpos, int ypos, int width, int height, 
 						Mix_AllocateChannels(16);
 						m_mPlayerBullet = Mix_LoadWAV("Fire.wav");
 						
-						m_mBgMusic = Mix_LoadMUS("bg.mp3");
+						m_mBgMusicTitle = Mix_LoadMUS("bg.mp3");
+						m_mBgMusic = Mix_LoadMUS("gamebg.mp3");
 						Mix_VolumeChunk(m_mPlayerBullet, 25);
 						
 						Mix_VolumeMusic(32);
@@ -73,8 +74,6 @@ bool Engine::init(const char* title, int xpos, int ypos, int width, int height, 
 	m_pDst = { width / 2 - m_pSrc.w / 2 - 150, height / 2 - m_pSrc.h / 2, m_pSrc.w, m_pSrc.h };
 	m_pFSM = new FSM(); // Creates the state machine object/instance.
 	m_pFSM->ChangeState(new TitleState()); // Invoking the ChangeState method to set the initial state, Title.
-	//added background music
-	Mix_PlayMusic(m_mBgMusic, -1);
 	m_bRunning = true; // Everything is okay, start the engine.
 	cout << "Success!" << endl;
 	return true;

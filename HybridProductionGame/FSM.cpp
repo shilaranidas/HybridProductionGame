@@ -73,12 +73,20 @@ void GameState::Update()
 		Engine::Instance().GetFSM().PushState(new PauseState());
 	else if (Engine::Instance().KeyDown(SDL_SCANCODE_X) == 1)
 		Engine::Instance().GetFSM().ChangeState(new TitleState());
-	if ((Engine::Instance().KeyDown(SDL_SCANCODE_W) || Engine::Instance().KeyDown(SDL_SCANCODE_UP)) && Engine::Instance().getDst()->y > Engine::Instance().getSpeed())
+	if ((Engine::Instance().KeyDown(SDL_SCANCODE_W) || Engine::Instance().KeyDown(SDL_SCANCODE_UP)) && Engine::Instance().getDst()->y > Engine::Instance().getSpeed() 
+		
+		)
 	{
 		
-		Engine::Instance().setAngle(270);
+			Engine::Instance().setAngle(270);
+			if(Engine::Instance().getDst()->y > 248)
+			Engine::Instance().getDst()->y -= Engine::Instance().getSpeed();
 		
-		Engine::Instance().getDst()->y -= Engine::Instance().getSpeed();
+		cout << Engine::Instance().getDst()->y << endl;
+		//here 248 is the building wall in top of background
+		
+			
+
 
 	}
 	if ((Engine::Instance().KeyDown(SDL_SCANCODE_S) || Engine::Instance().KeyDown(SDL_SCANCODE_DOWN)) && Engine::Instance().getDst()->y < HEIGHT - Engine::Instance().getDst()->h - Engine::Instance().getSpeed())

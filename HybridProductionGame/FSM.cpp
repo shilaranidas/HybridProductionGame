@@ -15,13 +15,14 @@ void State::Resume() {}
 // Begin PauseState.
 PauseState::PauseState() {}
 
+
 void PauseState::Enter()
 {
 	cout << "Entering Pause..." << endl;
 	m_vButtons.push_back(new Button("resume.png", { 0,0,200,100 }, { 412,200,200,100 },
-		std::bind( &FSM::PopState, &Engine::Instance().GetFSM() )));
+		std::bind(&FSM::PopState, &Engine::Instance().GetFSM())));
 	m_vButtons.push_back(new Button("exit.png", { 0,0,200,100 }, { 412,400,200,100 },
-		std::bind( &Engine::QuitGame, &Engine::Instance())) );
+		std::bind(&Engine::QuitGame, &Engine::Instance())));
 }
 
 void PauseState::Update()
@@ -46,7 +47,7 @@ void PauseState::Render()
 void PauseState::Exit()
 {
 	cout << "Exiting Pause..." << endl;
-	
+
 	for (int i = 0; i < (int)m_vButtons.size(); i++)
 	{
 		delete m_vButtons[i];
@@ -61,9 +62,9 @@ void PauseState::Exit()
 GameState::GameState() {}
 
 void GameState::Enter()
-{ 
+{
 	cout << "Entering Game..." << endl;
-	
+
 	Mix_PlayMusic(Engine::Instance().m_mBgMusic, -1);
 }
 
@@ -73,25 +74,25 @@ void GameState::Update()
 		Engine::Instance().GetFSM().PushState(new PauseState());
 	else if (Engine::Instance().KeyDown(SDL_SCANCODE_X) == 1)
 		Engine::Instance().GetFSM().ChangeState(new TitleState());
-	if ((Engine::Instance().KeyDown(SDL_SCANCODE_W) || Engine::Instance().KeyDown(SDL_SCANCODE_UP)) && Engine::Instance().getDst()->y > Engine::Instance().getSpeed() 
-		
+	if ((Engine::Instance().KeyDown(SDL_SCANCODE_W) || Engine::Instance().KeyDown(SDL_SCANCODE_UP)) && Engine::Instance().getDst()->y > Engine::Instance().getSpeed()
+
 		)
 	{
-		
-			Engine::Instance().setAngle(270);
-			if(Engine::Instance().getDst()->y > 248)
+
+		Engine::Instance().setAngle(270);
+		if (Engine::Instance().getDst()->y > 248)
 			Engine::Instance().getDst()->y -= Engine::Instance().getSpeed();
-		
+
 		cout << Engine::Instance().getDst()->y << endl;
 		//here 248 is the building wall in top of background
-		
-			
+
+
 
 
 	}
 	if ((Engine::Instance().KeyDown(SDL_SCANCODE_S) || Engine::Instance().KeyDown(SDL_SCANCODE_DOWN)) && Engine::Instance().getDst()->y < HEIGHT - Engine::Instance().getDst()->h - Engine::Instance().getSpeed())
 	{
-		
+
 		Engine::Instance().setAngle(90);
 		Engine::Instance().getDst()->y += Engine::Instance().getSpeed();
 		//cout << g_dst.y << " ";
@@ -107,7 +108,7 @@ void GameState::Update()
 	//if (keyDown(SDL_SCANCODE_D) && g_dst.x< WIDTH-g_dst.w- g_iSpeed)
 	if ((Engine::Instance().KeyDown(SDL_SCANCODE_D) || Engine::Instance().KeyDown(SDL_SCANCODE_RIGHT)) && Engine::Instance().getDst()->x < WIDTH - Engine::Instance().getDst()->w)
 	{
-		
+
 		Engine::Instance().setAngle(0);
 
 		Engine::Instance().getDst()->x += Engine::Instance().getSpeed();
@@ -123,17 +124,23 @@ void GameState::Render()
 	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTexture_bg(), NULL, NULL);
 	SDL_RenderCopyEx(Engine::Instance().GetRenderer(), Engine::Instance().getTexturePR(), Engine::Instance().getSrc(), Engine::Instance().getDst(), Engine::Instance().getAngle(), nullptr, SDL_FLIP_NONE);
 
-	
+
+	SDL_RenderCopyEx(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE1(), Engine::Instance().getAngle(), nullptr, SDL_FLIP_NONE);
+	SDL_RenderCopyEx(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE2(), Engine::Instance().getAngle(), nullptr, SDL_FLIP_NONE);
+	SDL_RenderCopyEx(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE3(), Engine::Instance().getAngle(), nullptr, SDL_FLIP_NONE);
+
+
+
 
 	//SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 255, 0, 255);
-	
+
 	// If GameState != current state.
 	if (dynamic_cast<GameState*>(Engine::Instance().GetFSM().GetStates().back()))
 		State::Render();
 }
 
 void GameState::Exit()
-{ 
+{
 	cout << "Exiting Game..." << endl;
 	Mix_FreeMusic(Engine::Instance().m_mBgMusic);
 }
@@ -147,16 +154,16 @@ TitleState::TitleState() {
 }
 
 void TitleState::Enter()
-{ 
+{
 	cout << "Entering Title..." << endl;
 	//added background music
 	Mix_PlayMusic(Engine::Instance().m_mBgMusicTitle, -1);
 
-	m_vButtons.push_back(new Button("button.png", { 0,0,200,100 }, { (WIDTH/2)-100,250,200,100 },
-		std::bind( &FSM::ChangeState, &Engine::Instance().GetFSM(), new GameState() )));
+	m_vButtons.push_back(new Button("button.png", { 0,0,200,100 }, { (WIDTH / 2) - 100,250,200,100 },
+		std::bind(&FSM::ChangeState, &Engine::Instance().GetFSM(), new GameState())));
 	// For the bind: what function, what instance, any parameters.
 	m_vButtons.push_back(new Button("exit.png", { 0,0,200,100 }, { (WIDTH / 2) - 100,400,200,100 },
-		std::bind( &Engine::QuitGame, &Engine::Instance() )));
+		std::bind(&Engine::QuitGame, &Engine::Instance())));
 }
 
 void TitleState::Update()
@@ -180,8 +187,8 @@ void TitleState::Render()
 	SDL_Texture* titleText2 = SDL_CreateTextureFromSurface(Engine::Instance().GetRenderer(), titleSurf2);
 	Engine::Instance().setFontTexture1(titleText1);
 	Engine::Instance().setFontTexture2(titleText2);
-	SDL_Rect titleRect1= { WIDTH/2-(titleSurf1->w * 1.5f), 30, titleSurf1->w*3, titleSurf1->h*3 };
-	SDL_Rect titleRect2 = {WIDTH / 2 - (titleSurf2->w * 1.5f), 130, titleSurf2->w * 3, titleSurf2->h * 3 };
+	SDL_Rect titleRect1 = { WIDTH / 2 - (titleSurf1->w * 1.5f), 30, titleSurf1->w * 3, titleSurf1->h * 3 };
+	SDL_Rect titleRect2 = { WIDTH / 2 - (titleSurf2->w * 1.5f), 130, titleSurf2->w * 3, titleSurf2->h * 3 };
 	SDL_RenderCopy(Engine::Instance().GetRenderer(), titleText1, 0, &titleRect1);
 	SDL_RenderCopy(Engine::Instance().GetRenderer(), titleText2, 0, &titleRect2);
 	SDL_FreeSurface(titleSurf1);
@@ -190,7 +197,7 @@ void TitleState::Render()
 }
 
 void TitleState::Exit()
-{ 
+{
 	cout << "Exiting Title..." << endl;
 	for (int i = 0; i < (int)m_vButtons.size(); i++)
 	{

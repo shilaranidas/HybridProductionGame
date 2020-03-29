@@ -32,17 +32,23 @@ bool Engine::init(const char* title, int xpos, int ypos, int width, int height, 
 					m_pTexture_bg = IMG_LoadTexture(m_pRenderer, "bg.png");
 					//Player shtuff
 					m_pTexturePR = IMG_LoadTexture(m_pRenderer, "playerRight.png");
+					m_pTextureE1 = IMG_LoadTexture(m_pRenderer, "enemy1.png");
+
+					//Enemy shtuff
+
+
+
 					//sound init
 					if (Mix_Init(MIX_INIT_MP3) != 0) // Mixer init success.
 					{
 						Mix_OpenAudio(22050, AUDIO_S16SYS, 2, 2048);
 						Mix_AllocateChannels(16);
 						m_mPlayerBullet = Mix_LoadWAV("Fire.wav");
-						
+
 						m_mBgMusicTitle = Mix_LoadMUS("bg.mp3");
 						m_mBgMusic = Mix_LoadMUS("gamebg.mp3");
 						Mix_VolumeChunk(m_mPlayerBullet, 25);
-						
+
 						Mix_VolumeMusic(32);
 						if (TTF_Init() == 0) // Font init success.
 						{
@@ -71,7 +77,18 @@ bool Engine::init(const char* title, int xpos, int ypos, int width, int height, 
 	m_iKeystates = SDL_GetKeyboardState(nullptr);
 	// Create the sprite.
 	m_pSrc = { 0, 0, 61, 46 };
-	m_pDst = { width / 2 - m_pSrc.w / 2 - 150, height / 2 - m_pSrc.h / 2, m_pSrc.w, m_pSrc.h };
+	m_pDst = { width / 2 - m_pSrc.w / 2 - 300, height / 2 - m_pSrc.h / 2 + 50, m_pSrc.w, m_pSrc.h };
+
+	m_pSrcE1 = { 0, 0, 40, 38 };
+	m_pDstE1 = { 467, 503, m_pSrcE1.w, m_pSrcE1.h };
+
+	m_pSrcE2 = { 0, 0, 40, 38 };
+	m_pDstE2 = { 500, 328, m_pSrcE1.w, m_pSrcE1.h };
+
+	m_pSrcE3 = { 0, 0, 40, 38 };
+	m_pDstE3 = { 630, 439, m_pSrcE1.w, m_pSrcE1.h };
+
+
 	m_pFSM = new FSM(); // Creates the state machine object/instance.
 	m_pFSM->ChangeState(new TitleState()); // Invoking the ChangeState method to set the initial state, Title.
 	m_bRunning = true; // Everything is okay, start the engine.
@@ -131,14 +148,14 @@ bool Engine::KeyDown(SDL_Scancode c)
 
 void Engine::update()
 {
-	
-	
+
+
 	GetFSM().Update(); // Invokes the update of the state machine.
 }
 
 void Engine::render()
 {
-	
+
 	GetFSM().Render(); // Invokes the render of the state machine.
 }
 
@@ -191,6 +208,23 @@ SDL_Rect* Engine::getDst()
 	return &m_pDst;
 }
 
+//Enemies DST
+SDL_Rect* Engine::getDstE1()
+{
+	return &m_pDstE1;
+}
+
+SDL_Rect* Engine::getDstE2()
+{
+	return &m_pDstE2;
+}
+
+SDL_Rect* Engine::getDstE3()
+{
+	return &m_pDstE3;
+}
+
+
 //void Engine::setDst(SDL_Rect& newDst)
 //{
 //	m_pDst = newDst;
@@ -201,6 +235,14 @@ SDL_Rect* Engine::getSrc()
 	return &m_pSrc;
 }
 
+// Enemiees
+SDL_Rect* Engine::getSrcE1()
+{
+	return &m_pSrcE1;
+}
+
+
+
 //void Engine::setSrc(SDL_Rect& newSrc)
 //{
 //	m_pSrc = newSrc;
@@ -209,6 +251,11 @@ SDL_Rect* Engine::getSrc()
 SDL_Texture* Engine::getTexturePR()
 {
 	return m_pTexturePR;
+}
+
+SDL_Texture* Engine::getTextureE1()
+{
+	return m_pTextureE1;
 }
 
 SDL_Texture* Engine::getTexture_bg()

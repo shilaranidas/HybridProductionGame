@@ -253,6 +253,7 @@ void FSM::PopState()
 	m_vStates.back()->Resume();
 }
 
+
 void FSM::Clean()
 {
 	while (!m_vStates.empty()) // Because we can exit the game in the pause state with the window's 'X'.

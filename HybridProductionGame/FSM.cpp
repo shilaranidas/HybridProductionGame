@@ -125,9 +125,9 @@ void GameState::Render()
 	SDL_RenderCopyEx(Engine::Instance().GetRenderer(), Engine::Instance().getTexturePR(), Engine::Instance().getSrc(), Engine::Instance().getDst(), Engine::Instance().getAngle(), nullptr, SDL_FLIP_NONE);
 
 
-	SDL_RenderCopyEx(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE1(), Engine::Instance().getAngle(), nullptr, SDL_FLIP_NONE);
-	SDL_RenderCopyEx(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE2(), Engine::Instance().getAngle(), nullptr, SDL_FLIP_NONE);
-	SDL_RenderCopyEx(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE3(), Engine::Instance().getAngle(), nullptr, SDL_FLIP_NONE);
+	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE1());
+	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE2());
+	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE3());
 
 
 

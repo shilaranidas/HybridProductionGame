@@ -71,7 +71,8 @@ private:
 	vector<Bullet*>* m_pBulletVec; // Pointer to the enemy bullet vector from Engine.
 	Mix_Chunk* m_pPew;
 public:
-	Enemy(SDL_Rect s, SDL_Rect d, vector<Bullet*>* bVec, Mix_Chunk* c, int fr = 120); // Default function params go in prototypes.
+	Enemy(SDL_Rect s, SDL_Rect d); // Default function params go in prototypes.
+	Enemy(SDL_Rect s, SDL_Rect d, vector<Bullet*>* bVec, Mix_Chunk* c, int fr = 120); 
 	void Update();
 	// Add more members later.
 };

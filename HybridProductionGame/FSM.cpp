@@ -65,7 +65,13 @@ void GameState::Enter()
 {
 	cout << "Entering Game..." << endl;
 	//{ width / 2 - m_pSrc.w / 2 - 300, height / 2 - m_pSrc.h / 2 + 50, m_pSrc.w, m_pSrc.h };
-	Engine::Instance().m_player = new Player({ 0,0,61,46 }, { Engine::getWidth()/2-61/2-300, Engine::getHeight()/2-46/2+50,61,46});
+	Engine::Instance().m_player = new Player({ 0,0,61,46 }, { WIDTH/2-61/2-300, HEIGHT/2-46/2+50,61,46});
+	//introduce enemy
+	Engine::Instance().m_vEnemies.clear();
+	Engine::Instance().m_vEnemies.reserve(3);
+	Engine::Instance().m_vEnemies.push_back(new Enemy({ 0,0,40,38 }, { 467,503,40,38 }));
+	Engine::Instance().m_vEnemies.push_back(new Enemy({ 0,0,40,38 }, { 500, 328,40,38 }));
+	Engine::Instance().m_vEnemies.push_back(new Enemy({ 0,0,40,38 }, { 630, 439,40,38 }));
 	Mix_PlayMusic(Engine::Instance().m_mBgMusic, -1);
 }
 
@@ -114,6 +120,7 @@ void GameState::Update()
 
 		Engine::Instance().m_player->GetDstP()->x += Engine::Instance().getSpeed();
 	}
+	
 }
 
 void GameState::Render()
@@ -125,10 +132,17 @@ void GameState::Render()
 	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTexture_bg(), NULL, NULL);
 	SDL_RenderCopyEx(Engine::Instance().GetRenderer(), Engine::Instance().getTexturePR(), Engine::Instance().m_player->GetSrcP(), Engine::Instance().m_player->GetDstP(), Engine::Instance().getAngle(), nullptr, SDL_FLIP_NONE);
 
+	// Enemies.
+	for (int i = 0; i < (int)Engine::Instance().m_vEnemies.size(); i++)
+	{
+		SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().m_vEnemies[i]->GetSrcP(), Engine::Instance().m_vEnemies[i]->GetDstP());
+		/*SDL_SetRenderDrawColor(m_pRenderer, 255, 0, 0, 128);
+		SDL_RenderFillRect(m_pRenderer, m_vEnemies[i]->GetDstP());*/
+	}
 
-	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE1());
-	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE2());
-	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE3());
+//	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE1());
+//	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE2());
+//	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE3());
 
 
 
@@ -143,6 +157,7 @@ void GameState::Render()
 void GameState::Exit()
 {
 	cout << "Exiting Game..." << endl;
+	Engine::Instance().m_vEnemies.clear();
 	Mix_FreeMusic(Engine::Instance().m_mBgMusic);
 }
 

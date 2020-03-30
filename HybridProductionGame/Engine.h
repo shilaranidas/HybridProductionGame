@@ -24,9 +24,9 @@ private: // Properties.
 	// New variables for sprite.
 	//SDL_Rect m_pSrc, m_pDst;
 	
-	SDL_Rect m_pSrcE1, m_pDstE1;
-	SDL_Rect m_pSrcE2, m_pDstE2;
-	SDL_Rect m_pSrcE3, m_pDstE3;
+	//SDL_Rect m_pSrcE1, m_pDstE1;
+	//SDL_Rect m_pSrcE2, m_pDstE2;
+	//SDL_Rect m_pSrcE3, m_pDstE3;
 	SDL_Texture* m_pTexturePR;
 	SDL_Texture* m_pTextureE1;
 	SDL_Texture* m_pTexture_bg;
@@ -62,6 +62,7 @@ private: // Methods.
 	void clean();
 public:
 	Player* m_player;
+	vector<Enemy*> m_vEnemies;
 	Mix_Music* m_mBgMusic;
 	Mix_Music* m_mBgMusicTitle;
 	Engine(); // Constructor.
@@ -75,13 +76,13 @@ public:
 	bool GetMouseState(int idx);
 	void QuitGame();
 	//SDL_Rect* getDst();
-	SDL_Rect* getDstE1();
-	SDL_Rect* getDstE2();
-	SDL_Rect* getDstE3();
+	//SDL_Rect* getDstE1();
+	//SDL_Rect* getDstE2();
+	//SDL_Rect* getDstE3();
 	//void setDst(SDL_Rect& newDst);
 	//void setDst(SDL_Rect dst);
 	//SDL_Rect* getSrc();
-	SDL_Rect* getSrcE1();
+	//SDL_Rect* getSrcE1();
 
 	//void setSrc(SDL_Rect& newSrc);
 	SDL_Texture* getTexturePR();

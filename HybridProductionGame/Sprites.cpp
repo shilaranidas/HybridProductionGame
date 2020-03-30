@@ -67,6 +67,7 @@ void Bullet::Update()
 }
 
 
+Enemy::Enemy(SDL_Rect s, SDL_Rect d) : AnimatedSprite(-90, 4, 4, s, d) {}
 
 Enemy::Enemy(SDL_Rect s, SDL_Rect d, vector<Bullet*>* bVec, Mix_Chunk* c, int fr) : AnimatedSprite(-90, 4, 4, s, d),
 m_pBulletVec(bVec), m_pPew(c), m_bulletTimer(0), m_timerMax(fr) {}

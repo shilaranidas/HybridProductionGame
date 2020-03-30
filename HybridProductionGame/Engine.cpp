@@ -79,14 +79,14 @@ bool Engine::init(const char* title, int xpos, int ypos, int width, int height, 
 	//m_pSrc = { 0, 0, 61, 46 };
 	//m_pDst = { width / 2 - m_pSrc.w / 2 - 300, height / 2 - m_pSrc.h / 2 + 50, m_pSrc.w, m_pSrc.h };
 
-	m_pSrcE1 = { 0, 0, 40, 38 };
+	/*m_pSrcE1 = { 0, 0, 40, 38 };
 	m_pDstE1 = { 467, 503, m_pSrcE1.w, m_pSrcE1.h };
 
 	m_pSrcE2 = { 0, 0, 40, 38 };
 	m_pDstE2 = { 500, 328, m_pSrcE1.w, m_pSrcE1.h };
 
 	m_pSrcE3 = { 0, 0, 40, 38 };
-	m_pDstE3 = { 630, 439, m_pSrcE1.w, m_pSrcE1.h };
+	m_pDstE3 = { 630, 439, m_pSrcE1.w, m_pSrcE1.h };*/
 
 
 	m_pFSM = new FSM(); // Creates the state machine object/instance.
@@ -209,20 +209,20 @@ void Engine::QuitGame() { m_bRunning = false; }
 //}
 
 //Enemies DST
-SDL_Rect* Engine::getDstE1()
-{
-	return &m_pDstE1;
-}
-
-SDL_Rect* Engine::getDstE2()
-{
-	return &m_pDstE2;
-}
-
-SDL_Rect* Engine::getDstE3()
-{
-	return &m_pDstE3;
-}
+//SDL_Rect* Engine::getDstE1()
+//{
+//	return &m_pDstE1;
+//}
+//
+//SDL_Rect* Engine::getDstE2()
+//{
+//	return &m_pDstE2;
+//}
+//
+//SDL_Rect* Engine::getDstE3()
+//{
+//	return &m_pDstE3;
+//}
 
 
 //void Engine::setDst(SDL_Rect& newDst)
@@ -236,10 +236,10 @@ SDL_Rect* Engine::getDstE3()
 //}
 
 // Enemiees
-SDL_Rect* Engine::getSrcE1()
-{
-	return &m_pSrcE1;
-}
+//SDL_Rect* Engine::getSrcE1()
+//{
+//	return &m_pSrcE1;
+//}
 
 
 

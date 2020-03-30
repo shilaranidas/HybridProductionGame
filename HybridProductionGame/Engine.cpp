@@ -96,7 +96,8 @@ bool Engine::init(const char* title, int xpos, int ypos, int width, int height, 
 	m_pSrcE3 = { 0, 0, 40, 38 };
 	m_pDstE3 = { 630, 439, m_pSrcE1.w, m_pSrcE1.h };*/
 
-
+	//added background music
+	//Mix_PlayMusic(m_mBgMusicTitle, -1);
 	m_pFSM = new FSM(); // Creates the state machine object/instance.
 	m_pFSM->ChangeState(new TitleState()); // Invoking the ChangeState method to set the initial state, Title.
 	m_bRunning = true; // Everything is okay, start the engine.
@@ -174,6 +175,10 @@ void Engine::render()
 void Engine::clean()
 {
 	cout << "Cleaning game." << endl;
+	Mix_FreeMusic(m_mBgMusicTitle);
+	Mix_FreeMusic(m_mBgMusic);
+	Mix_FreeChunk(m_mPlayerBullet);
+	Mix_FreeChunk(m_mPlayerExplode);
 	SDL_DestroyTexture(m_pTexturePR);
 	SDL_DestroyTexture(m_pTexturePB);
 	SDL_DestroyTexture(m_pTextureE1);

@@ -204,8 +204,11 @@ void GameState::Render()
 void GameState::Exit()
 {
 	cout << "Exiting Game..." << endl;
+	delete Engine::Instance().m_player;
+	Engine::Instance().m_player = nullptr;
+	Engine::Instance().m_vPBullets.clear();
 	Engine::Instance().m_vEnemies.clear();
-	Mix_FreeMusic(Engine::Instance().m_mBgMusic);
+	//Mix_FreeMusic(Engine::Instance().m_mBgMusic);
 }
 
 void GameState::Resume() { cout << "Resuming Game..." << endl; }
@@ -224,6 +227,8 @@ void TitleState::Enter()
 
 	//reset player,enemy for after lose
 	Engine::Instance().m_playerDie = false;
+	//reset score in title state
+	Engine::Instance().m_playerWin = false;
 	/*Engine::Instance().m_iESpawn = 0;
 	Engine::Instance().m_iESpawnMax = 60;*/
 	Engine::Instance().texW = 600;
@@ -268,6 +273,7 @@ void TitleState::Render()
 void TitleState::Exit()
 {
 	cout << "Exiting Title..." << endl;
+	//Mix_FreeMusic(Engine::Instance().m_mBgMusicTitle);
 	for (int i = 0; i < (int)m_vButtons.size(); i++)
 	{
 		delete m_vButtons[i];
@@ -275,7 +281,7 @@ void TitleState::Exit()
 	}
 	m_vButtons.clear();
 	m_vButtons.shrink_to_fit();
-	Mix_FreeMusic(Engine::Instance().m_mBgMusicTitle);
+	
 }
 // End TitleState.
 // Begin WinState.

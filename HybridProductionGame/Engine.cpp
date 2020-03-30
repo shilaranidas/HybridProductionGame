@@ -10,6 +10,7 @@ using namespace std;
 Engine::Engine()
 {
 	m_bRunning = false;
+	m_bCanShoot = true, m_playerDie = false;
 	m_iSpeed = 5;
 }
 Engine::~Engine() {}
@@ -32,6 +33,7 @@ bool Engine::init(const char* title, int xpos, int ypos, int width, int height, 
 					m_pTexture_bg = IMG_LoadTexture(m_pRenderer, "bg.png");
 					//Player shtuff
 					m_pTexturePR = IMG_LoadTexture(m_pRenderer, "playerRight.png");
+					m_pTexturePB = IMG_LoadTexture(m_pRenderer, "bullet.png");
 					m_pTextureE1 = IMG_LoadTexture(m_pRenderer, "enemy1.png");
 
 					//Enemy shtuff
@@ -118,6 +120,10 @@ void Engine::handleEvents()
 			if (event.key.keysym.sym == SDLK_ESCAPE)
 				m_bRunning = false;
 			break;
+		case SDL_KEYUP:
+			if (event.key.keysym.sym == SDLK_SPACE)
+				m_bCanShoot = true;
+			break;
 		case SDL_MOUSEBUTTONDOWN:
 			if (event.button.button >= 1 && event.button.button <= 3)
 				m_MouseState[event.button.button - 1] = true;
@@ -163,6 +169,8 @@ void Engine::clean()
 {
 	cout << "Cleaning game." << endl;
 	SDL_DestroyTexture(m_pTexturePR);
+	SDL_DestroyTexture(m_pTexturePB);
+	SDL_DestroyTexture(m_pTextureE1);
 	SDL_DestroyTexture(m_pTexture_bg);
 	SDL_DestroyTexture(m_pTitleText1);
 	SDL_DestroyTexture(m_pTitleText2);
@@ -251,6 +259,10 @@ void Engine::QuitGame() { m_bRunning = false; }
 SDL_Texture* Engine::getTexturePR()
 {
 	return m_pTexturePR;
+}
+SDL_Texture* Engine::getTexturePB()
+{
+	return m_pTexturePB;
 }
 
 SDL_Texture* Engine::getTextureE1()

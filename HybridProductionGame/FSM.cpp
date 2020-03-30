@@ -2,6 +2,7 @@
 #include <iostream>
 #include "FSM.h"
 #include "Engine.h"
+#include "Utilities.h"
 using namespace std;
 
 // Begin State. CTRL+M+H and CTRL+M+U to turn on/off collapsed code.
@@ -120,6 +121,25 @@ void GameState::Update()
 
 		Engine::Instance().m_player->GetDstP()->x += Engine::Instance().getSpeed();
 	}
+
+	if (Engine::Instance().KeyDown(SDL_SCANCODE_SPACE) && Engine::Instance().m_bCanShoot)
+	{
+		Engine::Instance().m_bCanShoot = false;
+		Engine::Instance().m_vPBullets.push_back(new Bullet({ 0,0,40,23 }, { Engine::Instance().m_player->GetDstP()->x + 25,Engine::Instance().m_player->GetDstP()->y+10 ,40,23 }, 30));
+		Mix_PlayChannel(-1, Engine::Instance().m_mPlayerBullet, 0);
+	}
+	// Update the bullets. Player's first.
+	for (int i = 0; i < (int)Engine::Instance().m_vPBullets.size(); i++)
+	{
+		Engine::Instance().m_vPBullets[i]->Update();
+		if (Engine::Instance().m_vPBullets[i]->GetDstP()->x > WIDTH)
+		{
+			delete Engine::Instance().m_vPBullets[i];
+			Engine::Instance().m_vPBullets[i] = nullptr;
+			Engine::Instance().m_bPBNull = true;
+		}
+	}
+	if (Engine::Instance().m_bPBNull) CleanVector<Bullet*>(Engine::Instance().m_vPBullets, Engine::Instance().m_bPBNull);
 	
 }
 
@@ -131,7 +151,13 @@ void GameState::Render()
 	// Render stuff.
 	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTexture_bg(), NULL, NULL);
 	SDL_RenderCopyEx(Engine::Instance().GetRenderer(), Engine::Instance().getTexturePR(), Engine::Instance().m_player->GetSrcP(), Engine::Instance().m_player->GetDstP(), Engine::Instance().getAngle(), nullptr, SDL_FLIP_NONE);
-
+	// Player bullets.	
+	for (int i = 0; i < (int)Engine::Instance().m_vPBullets.size(); i++)
+	{
+		SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTexturePB(), Engine::Instance().m_vPBullets[i]->GetSrcP(), Engine::Instance().m_vPBullets[i]->GetDstP());
+		/*SDL_SetRenderDrawColor(m_pRenderer, 255, 255, 0, 128);
+		SDL_RenderFillRect(m_pRenderer, m_vPBullets[i]->GetDstP());*/
+	}
 	// Enemies.
 	for (int i = 0; i < (int)Engine::Instance().m_vEnemies.size(); i++)
 	{

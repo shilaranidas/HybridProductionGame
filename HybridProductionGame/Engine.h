@@ -28,6 +28,7 @@ private: // Properties.
 	//SDL_Rect m_pSrcE2, m_pDstE2;
 	//SDL_Rect m_pSrcE3, m_pDstE3;
 	SDL_Texture* m_pTexturePR;
+	SDL_Texture* m_pTexturePB;
 	SDL_Texture* m_pTextureE1;
 	SDL_Texture* m_pTexture_bg;
 
@@ -42,8 +43,7 @@ private: // Properties.
 	SDL_Color m_cTextColor = { 255, 255, 255, 0 }; // White text.
 	SDL_Texture* m_pTitleText1;
 	SDL_Texture* m_pTitleText2;
-	// Audio members.
-	Mix_Chunk* m_mPlayerBullet;
+	
 
 private: // Methods.
 	bool init(const char*, int, int, int, int, int); // Parameter names are not needed in a function prototype.
@@ -61,10 +61,17 @@ private: // Methods.
 	void render();
 	void clean();
 public:
+	bool m_bENull, // These three flags check if we need to clear the respective vectors of nullptrs.
+		m_bPBNull,		
+		m_bCanShoot, // This restricts the player from firing again unless they release the Spacebar.
+		m_playerDie, m_playerWin;
 	Player* m_player;
 	vector<Enemy*> m_vEnemies;
+	vector<Bullet*> m_vPBullets;
 	Mix_Music* m_mBgMusic;
 	Mix_Music* m_mBgMusicTitle;
+	// Audio members.
+	Mix_Chunk* m_mPlayerBullet;
 	Engine(); // Constructor.
 	~Engine();
 	int run();
@@ -86,6 +93,7 @@ public:
 
 	//void setSrc(SDL_Rect& newSrc);
 	SDL_Texture* getTexturePR();
+	SDL_Texture* getTexturePB();
 	SDL_Texture* getTexture_bg();
 	SDL_Texture* getTextureE1();
 	static int getWidth();

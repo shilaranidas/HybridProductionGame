@@ -241,7 +241,7 @@ void Engine::QuitGame() { m_bRunning = false; }
 void Engine::CheckCollision()
 {
 	// Player vs. Enemy.
-	SDL_Rect p = { m_player->GetDstP()->x - 61, m_player->GetDstP()->y, 61, 46 };
+	SDL_Rect p = { m_player->GetDstP()->x, m_player->GetDstP()->y, 61, 46 };
 	for (int i = 0; i < (int)m_vEnemies.size(); i++)
 	{
 		SDL_Rect e = { m_vEnemies[i]->GetDstP()->x, m_vEnemies[i]->GetDstP()->y , 40, 38 };

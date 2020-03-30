@@ -35,6 +35,7 @@ bool Engine::init(const char* title, int xpos, int ypos, int width, int height, 
 					m_pTexturePR = IMG_LoadTexture(m_pRenderer, "playerRight.png");
 					m_pTexturePB = IMG_LoadTexture(m_pRenderer, "bullet.png");
 					m_pTextureE1 = IMG_LoadTexture(m_pRenderer, "enemy1.png");
+					m_pTextureExp = IMG_LoadTexture(m_pRenderer, "exp.png");
 
 					//Enemy shtuff
 
@@ -46,6 +47,7 @@ bool Engine::init(const char* title, int xpos, int ypos, int width, int height, 
 						Mix_OpenAudio(22050, AUDIO_S16SYS, 2, 2048);
 						Mix_AllocateChannels(16);
 						m_mPlayerBullet = Mix_LoadWAV("Fire.wav");
+						m_mPlayerExplode = Mix_LoadWAV("explode.wav");
 
 						m_mBgMusicTitle = Mix_LoadMUS("bg.mp3");
 						m_mBgMusic = Mix_LoadMUS("gamebg.mp3");
@@ -211,6 +213,26 @@ bool Engine::GetMouseState(int idx) { return m_MouseState[idx]; }
 
 void Engine::QuitGame() { m_bRunning = false; }
 
+void Engine::CheckCollision()
+{
+	// Player vs. Enemy.
+	SDL_Rect p = { m_player->GetDstP()->x - 61, m_player->GetDstP()->y, 61, 46 };
+	for (int i = 0; i < (int)m_vEnemies.size(); i++)
+	{
+		SDL_Rect e = { m_vEnemies[i]->GetDstP()->x, m_vEnemies[i]->GetDstP()->y - 38, 40, 38 };
+		if (SDL_HasIntersection(&p, &e))
+		{
+			// Game over!
+			cout << "Player goes boom!" << endl;
+			m_playerDie = true;
+			Mix_PlayChannel(-1, m_mPlayerExplode, 0);
+			break;
+		}
+	}
+	
+}
+
+
 //SDL_Rect* Engine::getDst()
 //{
 //	return &m_pDst;
@@ -268,6 +290,10 @@ SDL_Texture* Engine::getTexturePB()
 SDL_Texture* Engine::getTextureE1()
 {
 	return m_pTextureE1;
+}
+SDL_Texture* Engine::getTextureExp()
+{
+	return m_pTextureExp;
 }
 
 int Engine::getWidth()

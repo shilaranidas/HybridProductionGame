@@ -30,6 +30,7 @@ private: // Properties.
 	SDL_Texture* m_pTexturePR;
 	SDL_Texture* m_pTexturePB;
 	SDL_Texture* m_pTextureE1;
+	SDL_Texture* m_pTextureExp;
 	SDL_Texture* m_pTexture_bg;
 
 
@@ -72,6 +73,7 @@ public:
 	Mix_Music* m_mBgMusicTitle;
 	// Audio members.
 	Mix_Chunk* m_mPlayerBullet;
+	Mix_Chunk* m_mPlayerExplode;
 	Engine(); // Constructor.
 	~Engine();
 	int run();
@@ -82,6 +84,7 @@ public:
 	SDL_Point& GetMousePos();
 	bool GetMouseState(int idx);
 	void QuitGame();
+	void CheckCollision();
 	//SDL_Rect* getDst();
 	//SDL_Rect* getDstE1();
 	//SDL_Rect* getDstE2();
@@ -96,6 +99,7 @@ public:
 	SDL_Texture* getTexturePB();
 	SDL_Texture* getTexture_bg();
 	SDL_Texture* getTextureE1();
+	SDL_Texture* getTextureExp();
 	static int getWidth();
 	static int getHeight();
 	int getAngle();

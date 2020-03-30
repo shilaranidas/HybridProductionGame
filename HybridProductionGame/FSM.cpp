@@ -140,7 +140,8 @@ void GameState::Update()
 		}
 	}
 	if (Engine::Instance().m_bPBNull) CleanVector<Bullet*>(Engine::Instance().m_vPBullets, Engine::Instance().m_bPBNull);
-	
+	if (!Engine::Instance().m_playerDie && !Engine::Instance().m_playerWin)
+		Engine::Instance().CheckCollision();
 }
 
 void GameState::Render()

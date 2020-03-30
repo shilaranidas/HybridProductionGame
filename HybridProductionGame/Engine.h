@@ -3,6 +3,7 @@
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
+#include <vector>
 #include "FSM.h"
 #include "Sprites.h"
 #define WIDTH 924
@@ -75,6 +76,15 @@ public:
 	Mix_Chunk* m_mPlayerBullet;
 	Mix_Chunk* m_mPlayerExplode;
 	Explosion* m_explosion;
+	bool fontShowed = true;
+	TTF_Font* m_font;
+
+	SDL_Surface* m_surface;
+	SDL_Texture* m_ftexture;
+	int texW = 600;
+	int texH = 50;
+	SDL_Rect m_fsrcrect;
+	SDL_Rect m_fdstrect;
 	Engine(); // Constructor.
 	~Engine();
 	int run();
@@ -86,6 +96,7 @@ public:
 	bool GetMouseState(int idx);
 	void QuitGame();
 	void CheckCollision();
+	//void PrintMessage(string msg, bool shaded);
 	//SDL_Rect* getDst();
 	//SDL_Rect* getDstE1();
 	//SDL_Rect* getDstE2();
@@ -101,8 +112,7 @@ public:
 	SDL_Texture* getTexture_bg();
 	SDL_Texture* getTextureE1();
 	SDL_Texture* getTextureExp();
-	static int getWidth();
-	static int getHeight();
+	
 	int getAngle();
 	void setAngle(int newAngle);
 	int getSpeed();

@@ -5,14 +5,15 @@
 #include "SDL_image.h"
 using namespace std;
 
-Button::Button(const char* s, SDL_Rect src, SDL_Rect dst, std::function<void()> cb)
-	: m_rSrc(src), m_rDst(dst), m_iFrame(0)
+Button::Button(const char* s, SDL_Rect src, SDL_Rect dst, const char* text, int w, int h)
+	: m_rSrc(src), m_rDst(dst), m_state(STATE_UP)
 {
 	cout << "Constructing button!" << endl;
+	m_btnText = text;
+	width = w;
+	height = h;
 	// Set the button image. You should have some fail checking just in case. 
 	m_pText = IMG_LoadTexture(Engine::Instance().GetRenderer(), s);
-	// Setting the callback.
-	m_callback = cb;
 }
 
 Button::~Button()
@@ -31,30 +32,29 @@ bool Button::MouseCollision()
 void Button::Update()
 {
 	bool col = MouseCollision();
-	switch (m_iFrame)
+	switch (m_state)
 	{
-	case MOUSE_UP:
+	case STATE_UP:
 		if (col)   
-			m_iFrame = MOUSE_OVER;
+			m_state = STATE_OVER;
 		break;
-	case MOUSE_OVER:
-		
+	case STATE_OVER:
 		if (!col)
-			m_iFrame = MOUSE_UP;
+			m_state = STATE_UP;
 		else if (col && Engine::Instance().GetMouseState(0))
-			m_iFrame = MOUSE_DOWN;
+			m_state = STATE_DOWN;
 		break;
-	case MOUSE_DOWN:
+	case STATE_DOWN:
 		if (!Engine::Instance().GetMouseState(0))
 		{
 			if (col)
 			{
-				m_iFrame = MOUSE_OVER;
-				// Execute callback.
-				m_callback();
+				m_state = STATE_OVER;
+				// Execute new "callback".
+				Execute();
 			}
 			else 
-				m_iFrame = MOUSE_UP;
+				m_state = STATE_UP;
 		}
 		break;
 	}
@@ -62,6 +62,43 @@ void Button::Update()
 
 void Button::Render()
 {
-	m_rSrc.x = m_rSrc.w * m_iFrame;
+	//m_rSrc.x = m_rSrc.w (int)m_state;
 	SDL_RenderCopy(Engine::Instance().GetRenderer(), m_pText, &m_rSrc, &m_rDst);
+	SDL_Color color = { 223, 149, 75 };	
+	//int texW = 100;
+	//int texH = 30;
+	SDL_Rect m_fsrcrect;
+	SDL_Rect m_fdstrect;
+	m_fsrcrect = { 0,0,width,height };
+	m_fdstrect = { m_rDst.x + 100-width/2, m_rDst.y + 50, width, height };
+	TTF_SetFontOutline(Engine::Instance().m_font, 2);	
+	Engine::Instance().m_surface = TTF_RenderText_Solid(Engine::Instance().m_font, m_btnText, color);
+	Engine::Instance().m_ftexture = SDL_CreateTextureFromSurface(Engine::Instance().GetRenderer(), Engine::Instance().m_surface);
+	SDL_QueryTexture(Engine::Instance().m_ftexture, NULL, NULL, &width, &height);
+	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().m_ftexture, &m_fsrcrect, &m_fdstrect);
+}
+
+// Yes, the downside of the command pattern is we need a subclass for each unique type of button.
+
+PlayButton::PlayButton(const char * s, SDL_Rect src, SDL_Rect dst, const char * text, int w, int h):Button(s, src, dst,text,w,h){}
+void PlayButton::Execute()
+{
+	Engine::Instance().GetFSM().ChangeState(new GameState);
+}
+
+ExitButton::ExitButton(const char * s, SDL_Rect src, SDL_Rect dst, const char * text, int w, int h):Button(s, src, dst,text,w,h){}
+void ExitButton::Execute()
+{
+	Engine::Instance().QuitGame();
+}
+
+ResumeButton::ResumeButton(const char * s, SDL_Rect src, SDL_Rect dst, const char * text,  int w, int h) :Button(s, src, dst,text,w,h) {}
+void ResumeButton::Execute()
+{
+	Engine::Instance().GetFSM().PopState();
+}
+MainMenuButton::MainMenuButton(const char * s, SDL_Rect src, SDL_Rect dst, const char * text, int w, int h) : Button(s, src, dst, text, w, h) {}
+void MainMenuButton::Execute()
+{
+	Engine::Instance().GetFSM().ChangeState(new TitleState());
 }

@@ -3,6 +3,8 @@
 #include "FSM.h"
 #include "Engine.h"
 #include "Utilities.h"
+#define BUTTON_W 200
+#define BUTTON_H 100
 using namespace std;
 
 // Begin State. CTRL+M+H and CTRL+M+U to turn on/off collapsed code.
@@ -20,10 +22,9 @@ PauseState::PauseState() {}
 void PauseState::Enter()
 {
 	cout << "Entering Pause..." << endl;
-	m_vButtons.push_back(new Button("resume.png", { 0,0,200,100 }, { 412,200,200,100 },
-		std::bind(&FSM::PopState, &Engine::Instance().GetFSM())));
-	m_vButtons.push_back(new Button("exit.png", { 0,0,200,100 }, { 412,400,200,100 },
-		std::bind(&Engine::QuitGame, &Engine::Instance())));
+	m_vButtons.push_back(new ResumeButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 412,200,BUTTON_W,BUTTON_H }, "Resume", 100, 30));
+	// This exit button has a different size but SAME function as the one in title.
+	m_vButtons.push_back(new ExitButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 412,400,BUTTON_W,BUTTON_H }, "Exit", 60, 30));
 }
 
 void PauseState::Update()
@@ -83,6 +84,13 @@ void GameState::Update()
 		Engine::Instance().GetFSM().PushState(new PauseState());
 	else if (Engine::Instance().KeyDown(SDL_SCANCODE_X) == 1)
 		Engine::Instance().GetFSM().ChangeState(new TitleState());
+	else if (Engine::Instance().m_playerDie)
+		Engine::Instance().GetFSM().ChangeState(new LoseState());
+	else if (Engine::Instance().m_playerWin)
+		Engine::Instance().GetFSM().ChangeState(new WinState());
+	if (!Engine::Instance().m_playerDie && !Engine::Instance().m_playerWin)
+	{
+	
 	if ((Engine::Instance().KeyDown(SDL_SCANCODE_W) || Engine::Instance().KeyDown(SDL_SCANCODE_UP)) && Engine::Instance().m_player->GetDstP()->y > Engine::Instance().getSpeed()
 
 		)
@@ -126,9 +134,10 @@ void GameState::Update()
 	if (Engine::Instance().KeyDown(SDL_SCANCODE_SPACE) && Engine::Instance().m_bCanShoot)
 	{
 		Engine::Instance().m_bCanShoot = false;
-		Engine::Instance().m_vPBullets.push_back(new Bullet({ 0,0,40,23 }, { Engine::Instance().m_player->GetDstP()->x + 25,Engine::Instance().m_player->GetDstP()->y+10 ,40,23 }, 30));
+		Engine::Instance().m_vPBullets.push_back(new Bullet({ 0,0,40,23 }, { Engine::Instance().m_player->GetDstP()->x + 25,Engine::Instance().m_player->GetDstP()->y + 10 ,40,23 }, 30));
 		Mix_PlayChannel(-1, Engine::Instance().m_mPlayerBullet, 0);
 	}
+}
 	// Update the bullets. Player's first.
 	for (int i = 0; i < (int)Engine::Instance().m_vPBullets.size(); i++)
 	{
@@ -213,11 +222,17 @@ void TitleState::Enter()
 	//added background music
 	Mix_PlayMusic(Engine::Instance().m_mBgMusicTitle, -1);
 
-	m_vButtons.push_back(new Button("button.png", { 0,0,200,100 }, { (WIDTH / 2) - 100,250,200,100 },
-		std::bind(&FSM::ChangeState, &Engine::Instance().GetFSM(), new GameState())));
+	//reset player,enemy for after lose
+	Engine::Instance().m_playerDie = false;
+	/*Engine::Instance().m_iESpawn = 0;
+	Engine::Instance().m_iESpawnMax = 60;*/
+	Engine::Instance().texW = 600;
+	Engine::Instance().texH = 50;
+	Engine::Instance().m_fsrcrect = { 0,0,Engine::Instance().texW,Engine::Instance().texH };
+	Engine::Instance().m_fdstrect = { 200, 10, Engine::Instance().texW, Engine::Instance().texH };
+	m_vButtons.push_back(new PlayButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 312,300,BUTTON_W,BUTTON_H }, "Start Game", 100, 30));
 	// For the bind: what function, what instance, any parameters.
-	m_vButtons.push_back(new Button("exit.png", { 0,0,200,100 }, { (WIDTH / 2) - 100,400,200,100 },
-		std::bind(&Engine::QuitGame, &Engine::Instance())));
+	m_vButtons.push_back(new ExitButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 312,500,BUTTON_W,BUTTON_H }, "Exit", 60, 30));
 }
 
 void TitleState::Update()
@@ -263,6 +278,123 @@ void TitleState::Exit()
 	Mix_FreeMusic(Engine::Instance().m_mBgMusicTitle);
 }
 // End TitleState.
+// Begin WinState.
+WinState::WinState() {}
+
+void WinState::Enter()
+{
+	cout << "Entering Win..." << endl;
+	m_vButtons.push_back(new MainMenuButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 312,300,BUTTON_W,BUTTON_H }, "Main Menu", 100, 30));
+	// For the bind: what function, what instance, any parameters.
+	m_vButtons.push_back(new ExitButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 312,500,BUTTON_W,BUTTON_H }, "Exit", 60, 30));
+}
+
+void WinState::Update()
+{
+	for (int i = 0; i < (int)m_vButtons.size(); i++)
+		m_vButtons[i]->Update();
+}
+
+void WinState::Render()
+{
+	cout << "Rendering Win..." << endl;
+	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 72, 58, 75, 255);
+	SDL_RenderClear(Engine::Instance().GetRenderer());
+
+
+	for (int i = 0; i < (int)m_vButtons.size(); i++)
+		m_vButtons[i]->Render();
+
+	Engine::Instance().m_fdstrect.x = WIDTH / 2 - 200;
+	Engine::Instance().m_fdstrect.y = 100;
+	Engine::Instance().m_fdstrect.w = 400;
+	Engine::Instance().m_fdstrect.h = 70;
+	//Engine::Instance().PrintMessage("   Y O U     W O N  !!", true);
+	string msg = "   Y O U     W O N  !!";
+	SDL_Color color = { 255, 255, 255 };
+	SDL_Color colorbg = { 72,58,75 };
+	TTF_SetFontOutline(Engine::Instance().m_font, 2);
+	Engine::Instance().m_surface = TTF_RenderText_Shaded(Engine::Instance().m_font, msg.c_str(), color, colorbg);
+
+	Engine::Instance().m_ftexture = SDL_CreateTextureFromSurface(Engine::Instance().GetRenderer(), Engine::Instance().m_surface);
+	SDL_QueryTexture(Engine::Instance().m_ftexture, NULL, NULL, &Engine::Instance().texW, &Engine::Instance().texH);
+	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().m_ftexture, &Engine::Instance().m_fsrcrect, &Engine::Instance().m_fdstrect);
+	State::Render();
+}
+
+void WinState::Exit()
+{
+	cout << "Exiting Win..." << endl;
+	for (int i = 0; i < (int)m_vButtons.size(); i++)
+	{
+		delete m_vButtons[i];
+		m_vButtons[i] = nullptr;
+	}
+	m_vButtons.clear();
+	m_vButtons.shrink_to_fit();
+}
+// End WinState.
+
+// Begin LosState.
+LoseState::LoseState() {}
+
+void LoseState::Enter()
+{
+	cout << "Entering Lose..." << endl;
+	m_vButtons.push_back(new MainMenuButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 312,300,BUTTON_W,BUTTON_H }, "Main Menu", 100, 30));
+	// For the bind: what function, what instance, any parameters.
+	m_vButtons.push_back(new ExitButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 312,500,BUTTON_W,BUTTON_H }, "Exit", 60, 30));
+}
+
+void LoseState::Update()
+{
+	for (int i = 0; i < (int)m_vButtons.size(); i++)
+		m_vButtons[i]->Update();
+}
+
+void LoseState::Render()
+{
+	//cout << "Rendering Los..." << endl;	
+
+	//cout << "Rendering Title..." << endl;
+	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 72, 58, 75, 255);
+	SDL_RenderClear(Engine::Instance().GetRenderer());
+
+
+	for (int i = 0; i < (int)m_vButtons.size(); i++)
+		m_vButtons[i]->Render();
+
+	Engine::Instance().m_fdstrect.x = WIDTH / 2 - 200;
+	Engine::Instance().m_fdstrect.y = 100;
+	Engine::Instance().m_fdstrect.w = 400;
+	Engine::Instance().m_fdstrect.h = 70;
+	//Engine::Instance().PrintMessage("   G A M E     O V E R    !!", true);
+	string msg = "   G A M E     O V E R    !!";
+	SDL_Color color = { 255, 255, 255 };
+	SDL_Color colorbg = { 72,58,75 };
+	TTF_SetFontOutline(Engine::Instance().m_font, 2);
+	Engine::Instance().m_surface = TTF_RenderText_Shaded(Engine::Instance().m_font, msg.c_str(), color, colorbg);
+	
+	Engine::Instance().m_ftexture = SDL_CreateTextureFromSurface(Engine::Instance().GetRenderer(), Engine::Instance().m_surface);
+	SDL_QueryTexture(Engine::Instance().m_ftexture, NULL, NULL, &Engine::Instance().texW, &Engine::Instance().texH);
+	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().m_ftexture, &Engine::Instance().m_fsrcrect, &Engine::Instance().m_fdstrect);
+	State::Render();
+
+}
+
+void LoseState::Exit()
+{
+	cout << "Exiting Lose..." << endl;
+	for (int i = 0; i < (int)m_vButtons.size(); i++)
+	{
+		delete m_vButtons[i];
+		m_vButtons[i] = nullptr;
+	}
+	m_vButtons.clear();
+	m_vButtons.shrink_to_fit();
+}
+// End LoseState.
+
 
 // Begin StateMachine.
 void FSM::Update()

@@ -1,5 +1,6 @@
 #include "Engine.h"
 #include <iostream>
+#include <ctime>
 #include "Utilities.h"
 
 using namespace std;
@@ -14,7 +15,7 @@ Engine::Engine()
 	m_bCanShoot = true, m_playerDie = false;
 	m_iSpeed = 5;
 }
-Engine::~Engine() {}
+Engine::~Engine() { delete m_pFSM; }
 
 bool Engine::init(const char* title, int xpos, int ypos, int width, int height, int flags)
 {
@@ -35,10 +36,11 @@ bool Engine::init(const char* title, int xpos, int ypos, int width, int height, 
 					//Player shtuff
 					m_pTexturePR = IMG_LoadTexture(m_pRenderer, "playerRight.png");
 					m_pTexturePB = IMG_LoadTexture(m_pRenderer, "bullet.png");
+					//Enemy shtuff
 					m_pTextureE1 = IMG_LoadTexture(m_pRenderer, "enemy1.png");
 					m_pTextureExp = IMG_LoadTexture(m_pRenderer, "exp.png");
 
-					//Enemy shtuff
+					
 
 
 
@@ -58,6 +60,7 @@ bool Engine::init(const char* title, int xpos, int ypos, int width, int height, 
 						if (TTF_Init() == 0) // Font init success.
 						{
 							m_Font = TTF_OpenFont("LTYPE.TTF", 18); // 18 is our desired font size.
+							m_font = TTF_OpenFont("30pakgirl_bold_TBS.ttf", 25);
 						}
 						else return false; // Font init fail.
 					}
@@ -177,7 +180,11 @@ void Engine::clean()
 	SDL_DestroyTexture(m_pTexture_bg);
 	SDL_DestroyTexture(m_pTitleText1);
 	SDL_DestroyTexture(m_pTitleText2);
+	
 	GetFSM().Clean();
+	SDL_DestroyTexture(m_ftexture);
+	SDL_FreeSurface(m_surface);
+	TTF_CloseFont(m_font);
 	SDL_DestroyRenderer(m_pRenderer);
 	SDL_DestroyWindow(m_pWindow);
 	SDL_Quit();
@@ -185,6 +192,8 @@ void Engine::clean()
 
 int Engine::run()
 {
+	if (m_bRunning) // What does this do and what can it prevent?
+		return -1;
 	if (init("Hybrid Production Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, 0) == false)
 		return 1;
 	while (m_bRunning)
@@ -213,6 +222,21 @@ SDL_Point& Engine::GetMousePos() { return m_MousePos; }
 bool Engine::GetMouseState(int idx) { return m_MouseState[idx]; }
 
 void Engine::QuitGame() { m_bRunning = false; }
+/*void Engine::PrintMessage(string msg, bool shaded = false) {
+
+	SDL_Color color = { 255, 255, 255 };
+	SDL_Color colorbg = { 72,58,75 };
+	TTF_SetFontOutline(m_font, 2);
+	if (shaded)
+		m_surface = TTF_RenderText_Shaded(m_font, msg.c_str(), color, colorbg);
+	else
+		m_surface = TTF_RenderText_Solid(m_font, msg.c_str(), color);
+	m_ftexture = SDL_CreateTextureFromSurface(m_pRenderer, m_surface);
+	SDL_QueryTexture(m_ftexture, NULL, NULL, &texW, &texH);
+	SDL_RenderCopy(m_pRenderer, m_ftexture, &m_fsrcrect, &m_fdstrect);
+
+}*/
+
 
 void Engine::CheckCollision()
 {
@@ -220,7 +244,7 @@ void Engine::CheckCollision()
 	SDL_Rect p = { m_player->GetDstP()->x - 61, m_player->GetDstP()->y, 61, 46 };
 	for (int i = 0; i < (int)m_vEnemies.size(); i++)
 	{
-		SDL_Rect e = { m_vEnemies[i]->GetDstP()->x, m_vEnemies[i]->GetDstP()->y - 38, 40, 38 };
+		SDL_Rect e = { m_vEnemies[i]->GetDstP()->x, m_vEnemies[i]->GetDstP()->y , 40, 38 };
 		if (SDL_HasIntersection(&p, &e))
 		{
 			// Game over!
@@ -334,15 +358,7 @@ SDL_Texture* Engine::getTextureExp()
 	return m_pTextureExp;
 }
 
-int Engine::getWidth()
-{
-	return WIDTH;
-}
 
-int Engine::getHeight()
-{
-	return HEIGHT;
-}
 
 SDL_Texture* Engine::getTexture_bg()
 {

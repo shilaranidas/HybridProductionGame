@@ -49,6 +49,29 @@ public:
 	void Render();
 	void Exit();
 };
+class WinState : public State
+{
+private:
+	vector<Button*> m_vButtons;
+public:
+	WinState();
+	void Enter();
+	void Update();
+	void Render();
+	void Exit();
+};
+
+class LoseState : public State
+{
+private:
+	vector<Button*> m_vButtons;
+public:
+	LoseState();
+	void Enter();
+	void Update();
+	void Render();
+	void Exit();
+};
 
 class FSM
 {

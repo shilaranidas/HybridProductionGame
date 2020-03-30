@@ -73,6 +73,7 @@ void GameState::Enter()
 	Engine::Instance().m_vEnemies.push_back(new Enemy({ 0,0,40,38 }, { 467,503,40,38 }));
 	Engine::Instance().m_vEnemies.push_back(new Enemy({ 0,0,40,38 }, { 500, 328,40,38 }));
 	Engine::Instance().m_vEnemies.push_back(new Enemy({ 0,0,40,38 }, { 630, 439,40,38 }));
+	Engine::Instance().m_explosion = new Explosion({ 0,0,96,96 }, { 0,0,96,96 });
 	Mix_PlayMusic(Engine::Instance().m_mBgMusic, -1);
 }
 
@@ -151,7 +152,17 @@ void GameState::Render()
 	SDL_RenderClear(Engine::Instance().GetRenderer());
 	// Render stuff.
 	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTexture_bg(), NULL, NULL);
-	SDL_RenderCopyEx(Engine::Instance().GetRenderer(), Engine::Instance().getTexturePR(), Engine::Instance().m_player->GetSrcP(), Engine::Instance().m_player->GetDstP(), Engine::Instance().getAngle(), nullptr, SDL_FLIP_NONE);
+	// Player.
+	if (!Engine::Instance().m_playerDie)
+		SDL_RenderCopyEx(Engine::Instance().GetRenderer(), Engine::Instance().getTexturePR(), Engine::Instance().m_player->GetSrcP(), Engine::Instance().m_player->GetDstP(), Engine::Instance().getAngle(), nullptr, SDL_FLIP_NONE);
+	else
+	{
+		if (Engine::Instance().m_explosion->m_isAnimate) {
+			SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTextureExp(), Engine::Instance().m_explosion->GetSrcP(), Engine::Instance().m_explosion->GetDstP());
+			Engine::Instance().m_explosion->Animate1();
+
+		}
+	}
 	// Player bullets.	
 	for (int i = 0; i < (int)Engine::Instance().m_vPBullets.size(); i++)
 	{

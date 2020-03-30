@@ -1,5 +1,6 @@
 #include "Engine.h"
 #include <iostream>
+#include "Utilities.h"
 
 using namespace std;
 
@@ -229,7 +230,44 @@ void Engine::CheckCollision()
 			break;
 		}
 	}
+	// Player bullets vs. Enemies.
+	for (int i = 0; i < (int)m_vPBullets.size(); i++)
+	{
+		SDL_Rect b = { m_vPBullets[i]->GetDstP()->x - 40, m_vPBullets[i]->GetDstP()->y, 40, 23 };
+		for (int j = 0; j < (int)m_vEnemies.size(); j++)
+		{
+			if (m_vEnemies[j] == nullptr) continue;
+			SDL_Rect e = { m_vEnemies[j]->GetDstP()->x, m_vEnemies[j]->GetDstP()->y , 40, 38 };
+			if (SDL_HasIntersection(&b, &e))
+			{
+				m_player->m_pCurrentScore++;
+
+				Mix_PlayChannel(-1, m_mPlayerExplode, 0);
+				delete m_vEnemies[j];
+				m_vEnemies[j] = nullptr;
+				delete m_vPBullets[i];
+				m_vPBullets[i] = nullptr;
+				m_bENull = true;
+				m_bPBNull = true;
+				if (m_player->m_pCurrentScore == m_player->m_pWinScore)
+				{
+					m_playerWin = true;
+				}
+				break;
+			}
+		}
+	}
+	if (m_bENull) CleanVector<Enemy*>(m_vEnemies, m_bENull);
+	if (m_bPBNull) CleanVector<Bullet*>(m_vPBullets, m_bPBNull);
 	
+	if (m_playerDie)
+	{
+		//m_explosion = new Explosion({ 0,156,96,96 }, { p.x,p.y,96,96 });
+		m_explosion->m_isAnimate = true;
+		m_explosion->SetDstP({ p.x,p.y,96,96 });
+		delete m_player;
+		m_player = nullptr;
+	}
 }
 
 

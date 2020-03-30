@@ -74,6 +74,7 @@ public:
 	// Audio members.
 	Mix_Chunk* m_mPlayerBullet;
 	Mix_Chunk* m_mPlayerExplode;
+	Explosion* m_explosion;
 	Engine(); // Constructor.
 	~Engine();
 	int run();

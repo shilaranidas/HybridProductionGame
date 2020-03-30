@@ -64,7 +64,8 @@ GameState::GameState() {}
 void GameState::Enter()
 {
 	cout << "Entering Game..." << endl;
-
+	//{ width / 2 - m_pSrc.w / 2 - 300, height / 2 - m_pSrc.h / 2 + 50, m_pSrc.w, m_pSrc.h };
+	Engine::Instance().m_player = new Player({ 0,0,61,46 }, { Engine::getWidth()/2-61/2-300, Engine::getHeight()/2-46/2+50,61,46});
 	Mix_PlayMusic(Engine::Instance().m_mBgMusic, -1);
 }
 
@@ -74,44 +75,44 @@ void GameState::Update()
 		Engine::Instance().GetFSM().PushState(new PauseState());
 	else if (Engine::Instance().KeyDown(SDL_SCANCODE_X) == 1)
 		Engine::Instance().GetFSM().ChangeState(new TitleState());
-	if ((Engine::Instance().KeyDown(SDL_SCANCODE_W) || Engine::Instance().KeyDown(SDL_SCANCODE_UP)) && Engine::Instance().getDst()->y > Engine::Instance().getSpeed()
+	if ((Engine::Instance().KeyDown(SDL_SCANCODE_W) || Engine::Instance().KeyDown(SDL_SCANCODE_UP)) && Engine::Instance().m_player->GetDstP()->y > Engine::Instance().getSpeed()
 
 		)
 	{
 
 		Engine::Instance().setAngle(270);
-		if (Engine::Instance().getDst()->y > 248)
-			Engine::Instance().getDst()->y -= Engine::Instance().getSpeed();
+		if (Engine::Instance().m_player->GetDstP()->y > 248)
+			Engine::Instance().m_player->GetDstP()->y -= Engine::Instance().getSpeed();
 
-		cout << Engine::Instance().getDst()->y << endl;
+		cout << Engine::Instance().m_player->GetDstP()->y << endl;
 		//here 248 is the building wall in top of background
 
 
 
 
 	}
-	if ((Engine::Instance().KeyDown(SDL_SCANCODE_S) || Engine::Instance().KeyDown(SDL_SCANCODE_DOWN)) && Engine::Instance().getDst()->y < HEIGHT - Engine::Instance().getDst()->h - Engine::Instance().getSpeed())
+	if ((Engine::Instance().KeyDown(SDL_SCANCODE_S) || Engine::Instance().KeyDown(SDL_SCANCODE_DOWN)) && Engine::Instance().m_player->GetDstP()->y < HEIGHT - Engine::Instance().m_player->GetDstP()->h - Engine::Instance().getSpeed())
 	{
 
 		Engine::Instance().setAngle(90);
-		Engine::Instance().getDst()->y += Engine::Instance().getSpeed();
+		Engine::Instance().m_player->GetDstP()->y += Engine::Instance().getSpeed();
 		//cout << g_dst.y << " ";
 	}
 
-	if ((Engine::Instance().KeyDown(SDL_SCANCODE_A) || Engine::Instance().KeyDown(SDL_SCANCODE_LEFT)) && Engine::Instance().getDst()->x > Engine::Instance().getSpeed())
+	if ((Engine::Instance().KeyDown(SDL_SCANCODE_A) || Engine::Instance().KeyDown(SDL_SCANCODE_LEFT)) && Engine::Instance().m_player->GetDstP()->x > Engine::Instance().getSpeed())
 	{
 		Engine::Instance().setAngle(180);
-		Engine::Instance().getDst()->x -= Engine::Instance().getSpeed();
+		Engine::Instance().m_player->GetDstP()->x -= Engine::Instance().getSpeed();
 	}
 
 
 	//if (keyDown(SDL_SCANCODE_D) && g_dst.x< WIDTH-g_dst.w- g_iSpeed)
-	if ((Engine::Instance().KeyDown(SDL_SCANCODE_D) || Engine::Instance().KeyDown(SDL_SCANCODE_RIGHT)) && Engine::Instance().getDst()->x < WIDTH - Engine::Instance().getDst()->w)
+	if ((Engine::Instance().KeyDown(SDL_SCANCODE_D) || Engine::Instance().KeyDown(SDL_SCANCODE_RIGHT)) && Engine::Instance().m_player->GetDstP()->x < WIDTH - Engine::Instance().m_player->GetDstP()->w)
 	{
 
 		Engine::Instance().setAngle(0);
 
-		Engine::Instance().getDst()->x += Engine::Instance().getSpeed();
+		Engine::Instance().m_player->GetDstP()->x += Engine::Instance().getSpeed();
 	}
 }
 
@@ -122,7 +123,7 @@ void GameState::Render()
 	SDL_RenderClear(Engine::Instance().GetRenderer());
 	// Render stuff.
 	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTexture_bg(), NULL, NULL);
-	SDL_RenderCopyEx(Engine::Instance().GetRenderer(), Engine::Instance().getTexturePR(), Engine::Instance().getSrc(), Engine::Instance().getDst(), Engine::Instance().getAngle(), nullptr, SDL_FLIP_NONE);
+	SDL_RenderCopyEx(Engine::Instance().GetRenderer(), Engine::Instance().getTexturePR(), Engine::Instance().m_player->GetSrcP(), Engine::Instance().m_player->GetDstP(), Engine::Instance().getAngle(), nullptr, SDL_FLIP_NONE);
 
 
 	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE1());

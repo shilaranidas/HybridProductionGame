@@ -4,6 +4,7 @@
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
 #include "FSM.h"
+#include "Sprites.h"
 #define WIDTH 924
 #define HEIGHT 703
 #define FPS 60
@@ -21,7 +22,8 @@ private: // Properties.
 	SDL_Renderer* m_pRenderer; // This represents the buffer to draw to.
 
 	// New variables for sprite.
-	SDL_Rect m_pSrc, m_pDst;
+	//SDL_Rect m_pSrc, m_pDst;
+	
 	SDL_Rect m_pSrcE1, m_pDstE1;
 	SDL_Rect m_pSrcE2, m_pDstE2;
 	SDL_Rect m_pSrcE3, m_pDstE3;
@@ -59,6 +61,7 @@ private: // Methods.
 	void render();
 	void clean();
 public:
+	Player* m_player;
 	Mix_Music* m_mBgMusic;
 	Mix_Music* m_mBgMusicTitle;
 	Engine(); // Constructor.
@@ -71,20 +74,21 @@ public:
 	SDL_Point& GetMousePos();
 	bool GetMouseState(int idx);
 	void QuitGame();
-	SDL_Rect* getDst();
+	//SDL_Rect* getDst();
 	SDL_Rect* getDstE1();
 	SDL_Rect* getDstE2();
 	SDL_Rect* getDstE3();
 	//void setDst(SDL_Rect& newDst);
 	//void setDst(SDL_Rect dst);
-	SDL_Rect* getSrc();
+	//SDL_Rect* getSrc();
 	SDL_Rect* getSrcE1();
 
 	//void setSrc(SDL_Rect& newSrc);
 	SDL_Texture* getTexturePR();
 	SDL_Texture* getTexture_bg();
 	SDL_Texture* getTextureE1();
-
+	static int getWidth();
+	static int getHeight();
 	int getAngle();
 	void setAngle(int newAngle);
 	int getSpeed();

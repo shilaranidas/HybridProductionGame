@@ -76,8 +76,8 @@ bool Engine::init(const char* title, int xpos, int ypos, int width, int height, 
 	m_fps = (Uint32)round((1 / (double)FPS) * 1000); // Sets FPS in milliseconds and rounds.
 	m_iKeystates = SDL_GetKeyboardState(nullptr);
 	// Create the sprite.
-	m_pSrc = { 0, 0, 61, 46 };
-	m_pDst = { width / 2 - m_pSrc.w / 2 - 300, height / 2 - m_pSrc.h / 2 + 50, m_pSrc.w, m_pSrc.h };
+	//m_pSrc = { 0, 0, 61, 46 };
+	//m_pDst = { width / 2 - m_pSrc.w / 2 - 300, height / 2 - m_pSrc.h / 2 + 50, m_pSrc.w, m_pSrc.h };
 
 	m_pSrcE1 = { 0, 0, 40, 38 };
 	m_pDstE1 = { 467, 503, m_pSrcE1.w, m_pSrcE1.h };
@@ -203,10 +203,10 @@ bool Engine::GetMouseState(int idx) { return m_MouseState[idx]; }
 
 void Engine::QuitGame() { m_bRunning = false; }
 
-SDL_Rect* Engine::getDst()
-{
-	return &m_pDst;
-}
+//SDL_Rect* Engine::getDst()
+//{
+//	return &m_pDst;
+//}
 
 //Enemies DST
 SDL_Rect* Engine::getDstE1()
@@ -230,10 +230,10 @@ SDL_Rect* Engine::getDstE3()
 //	m_pDst = newDst;
 //}
 
-SDL_Rect* Engine::getSrc()
-{
-	return &m_pSrc;
-}
+//SDL_Rect* Engine::getSrc()
+//{
+//	return &m_pSrc;
+//}
 
 // Enemiees
 SDL_Rect* Engine::getSrcE1()
@@ -256,6 +256,16 @@ SDL_Texture* Engine::getTexturePR()
 SDL_Texture* Engine::getTextureE1()
 {
 	return m_pTextureE1;
+}
+
+int Engine::getWidth()
+{
+	return WIDTH;
+}
+
+int Engine::getHeight()
+{
+	return HEIGHT;
 }
 
 SDL_Texture* Engine::getTexture_bg()

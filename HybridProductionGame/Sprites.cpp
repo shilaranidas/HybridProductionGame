@@ -63,7 +63,41 @@ Bullet::Bullet(SDL_Rect s, SDL_Rect d, int spd) :
 
 void Bullet::Update()
 {
-	m_rDst.x += m_speed;
+	if (Engine::Instance().m_bShootUp == true)
+	{
+		Engine::Instance().m_bShootDown = false;
+		Engine::Instance().m_bShootRight = false;
+		Engine::Instance().m_bShootLeft = false;
+
+		m_rDst.y -= m_speed;
+	}
+
+	if (Engine::Instance().m_bShootDown == true)
+	{
+		Engine::Instance().m_bShootUp = false;
+		Engine::Instance().m_bShootRight = false;
+		Engine::Instance().m_bShootLeft = false;
+
+		m_rDst.y += m_speed;
+	}
+
+	if (Engine::Instance().m_bShootRight == true)
+	{
+		Engine::Instance().m_bShootUp = false;
+		Engine::Instance().m_bShootDown = false;
+		Engine::Instance().m_bShootLeft = false;
+
+		m_rDst.x += m_speed;
+	}
+
+	if (Engine::Instance().m_bShootLeft == true)
+	{
+		Engine::Instance().m_bShootDown = false;
+		Engine::Instance().m_bShootRight = false;
+		Engine::Instance().m_bShootUp = false;
+
+		m_rDst.x -= m_speed;
+	}
 }
 
 

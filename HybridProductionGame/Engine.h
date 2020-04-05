@@ -66,6 +66,10 @@ public:
 	bool m_bENull, // These three flags check if we need to clear the respective vectors of nullptrs.
 		m_bPBNull,		
 		m_bCanShoot, // This restricts the player from firing again unless they release the Spacebar.
+		m_bShootUp,
+		m_bShootDown,
+		m_bShootRight,
+		m_bShootLeft,
 		m_playerDie, m_playerWin;
 	Player* m_player;
 	vector<Enemy*> m_vEnemies;
@@ -90,6 +94,7 @@ public:
 	int run();
 	static Engine& Instance(); // This static method creates the static instance that can be accessed 'globally'
 	bool KeyDown(SDL_Scancode c);
+	bool KeyUp(SDL_Scancode c);
 	SDL_Renderer* GetRenderer();
 	FSM& GetFSM();
 	SDL_Point& GetMousePos();

@@ -88,48 +88,66 @@ void GameState::Update()
 		Engine::Instance().GetFSM().ChangeState(new LoseState());
 	else if (Engine::Instance().m_playerWin)
 		Engine::Instance().GetFSM().ChangeState(new WinState());
+
 	if (!Engine::Instance().m_playerDie && !Engine::Instance().m_playerWin)
 	{
 	
-	if ((Engine::Instance().KeyDown(SDL_SCANCODE_W) || Engine::Instance().KeyDown(SDL_SCANCODE_UP)) && Engine::Instance().m_player->GetDstP()->y > Engine::Instance().getSpeed()
-
-		)
+	if ((Engine::Instance().KeyDown(SDL_SCANCODE_W)) && Engine::Instance().m_player->GetDstP()->y > Engine::Instance().getSpeed())
 	{
+		Engine::Instance().m_bShootUp = true;
+		Engine::Instance().m_bShootDown = false;
+		Engine::Instance().m_bShootRight = false;
+		Engine::Instance().m_bShootLeft = false;
 
 		Engine::Instance().setAngle(270);
 		if (Engine::Instance().m_player->GetDstP()->y > 248)
 			Engine::Instance().m_player->GetDstP()->y -= Engine::Instance().getSpeed();
 
+	
 		cout << Engine::Instance().m_player->GetDstP()->y << endl;
 		//here 248 is the building wall in top of background
 
 
-
-
 	}
-	if ((Engine::Instance().KeyDown(SDL_SCANCODE_S) || Engine::Instance().KeyDown(SDL_SCANCODE_DOWN)) && Engine::Instance().m_player->GetDstP()->y < HEIGHT - Engine::Instance().m_player->GetDstP()->h - Engine::Instance().getSpeed())
+	if ((Engine::Instance().KeyDown(SDL_SCANCODE_S)) && Engine::Instance().m_player->GetDstP()->y < HEIGHT - Engine::Instance().m_player->GetDstP()->h - Engine::Instance().getSpeed())
 	{
+		Engine::Instance().m_bShootUp = false;
+		Engine::Instance().m_bShootDown = true;
+		Engine::Instance().m_bShootRight = false;
+		Engine::Instance().m_bShootLeft = false;
 
 		Engine::Instance().setAngle(90);
 		Engine::Instance().m_player->GetDstP()->y += Engine::Instance().getSpeed();
 		//cout << g_dst.y << " ";
 	}
 
-	if ((Engine::Instance().KeyDown(SDL_SCANCODE_A) || Engine::Instance().KeyDown(SDL_SCANCODE_LEFT)) && Engine::Instance().m_player->GetDstP()->x > Engine::Instance().getSpeed())
+	if ((Engine::Instance().KeyDown(SDL_SCANCODE_A)) && Engine::Instance().m_player->GetDstP()->x > Engine::Instance().getSpeed())
 	{
+		Engine::Instance().m_bShootUp = false;
+		Engine::Instance().m_bShootDown = false;
+		Engine::Instance().m_bShootRight = false;
+		Engine::Instance().m_bShootLeft = true;
+
 		Engine::Instance().setAngle(180);
 		Engine::Instance().m_player->GetDstP()->x -= Engine::Instance().getSpeed();
 	}
 
 
 	//if (keyDown(SDL_SCANCODE_D) && g_dst.x< WIDTH-g_dst.w- g_iSpeed)
-	if ((Engine::Instance().KeyDown(SDL_SCANCODE_D) || Engine::Instance().KeyDown(SDL_SCANCODE_RIGHT)) && Engine::Instance().m_player->GetDstP()->x < WIDTH - Engine::Instance().m_player->GetDstP()->w)
+	if ((Engine::Instance().KeyDown(SDL_SCANCODE_D)) && Engine::Instance().m_player->GetDstP()->x < WIDTH - Engine::Instance().m_player->GetDstP()->w)
 	{
+		Engine::Instance().m_bShootUp = false;
+		Engine::Instance().m_bShootDown = false;
+		Engine::Instance().m_bShootRight = true;
+		Engine::Instance().m_bShootLeft = false;
 
 		Engine::Instance().setAngle(0);
 
 		Engine::Instance().m_player->GetDstP()->x += Engine::Instance().getSpeed();
 	}
+	//---------------------------------------------------------------------------------------SHOOTING----------------------------------------------------------------------------------//
+
+
 
 	if (Engine::Instance().KeyDown(SDL_SCANCODE_SPACE) && Engine::Instance().m_bCanShoot)
 	{
@@ -137,7 +155,11 @@ void GameState::Update()
 		Engine::Instance().m_vPBullets.push_back(new Bullet({ 0,0,40,23 }, { Engine::Instance().m_player->GetDstP()->x + 25,Engine::Instance().m_player->GetDstP()->y + 10 ,40,23 }, 30));
 		Mix_PlayChannel(-1, Engine::Instance().m_mPlayerBullet, 0);
 	}
+
+
+
 }
+
 	// Update the bullets. Player's first.
 	for (int i = 0; i < (int)Engine::Instance().m_vPBullets.size(); i++)
 	{

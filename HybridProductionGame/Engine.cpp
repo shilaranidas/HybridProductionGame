@@ -130,6 +130,7 @@ void Engine::handleEvents()
 		case SDL_KEYUP:
 			if (event.key.keysym.sym == SDLK_SPACE)
 				m_bCanShoot = true;
+
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 			if (event.button.button >= 1 && event.button.button <= 3)
@@ -158,6 +159,20 @@ bool Engine::KeyDown(SDL_Scancode c)
 	}
 	return false;
 }
+
+bool Engine::KeyUp(SDL_Scancode c)
+{
+	if (m_iKeystates != nullptr)
+	{
+		if (m_iKeystates[c] == 0)
+			return true;
+		else
+			return false;
+	}
+	return false;
+}
+
+
 
 void Engine::update()
 {

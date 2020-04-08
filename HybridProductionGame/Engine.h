@@ -68,7 +68,7 @@ public:
 		m_bPBNull,		
 		
 		m_playerDie, m_playerWinLevel1, m_playerWinLevel2, m_playerWinLevel3, m_playerWinFinal;
-	int m_bCanShoot; // 0 for no shoot, 5 for spacebar, 8 for up, 2 for down, 6 for right, 4 for left
+	int m_bCanShoot; // 0 for no shoot, 8 for up, 2 for down, 6 for right, 4 for left
 		
 	Player* m_player;
 	vector<Enemy*> m_vEnemies;

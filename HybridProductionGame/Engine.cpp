@@ -12,7 +12,7 @@ using namespace std;
 Engine::Engine()
 {
 	m_bRunning = false;
-	m_bCanShoot = 5,
+	m_bCanShoot =6,
 		
 		m_playerDie = false;
 	m_iSpeed = 5;
@@ -132,11 +132,7 @@ void Engine::handleEvents()
 				m_bRunning = false;
 			break;
 		case SDL_KEYUP:
-			if (event.key.keysym.sym == SDLK_SPACE)
-			{
-				m_bCanShoot = 5;
-			}
-			else if (event.key.keysym.sym == SDLK_UP)
+			if (event.key.keysym.sym == SDLK_UP)
 				m_bCanShoot = 8;
 			else if (event.key.keysym.sym == SDLK_DOWN)
 				m_bCanShoot = 2;

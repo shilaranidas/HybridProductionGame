@@ -150,13 +150,44 @@ void GameState::Update()
 
 
 
-	if (Engine::Instance().KeyDown(SDL_SCANCODE_SPACE) && Engine::Instance().m_bCanShoot)
+	/*if (Engine::Instance().KeyDown(SDL_SCANCODE_SPACE) && Engine::Instance().m_bCanShoot)
 	{
 		Engine::Instance().m_bCanShoot = false;
 		Engine::Instance().m_vPBullets.push_back(new Bullet({ 0,0,40,23 }, { Engine::Instance().m_player->GetDstP()->x + 25,Engine::Instance().m_player->GetDstP()->y + 10 ,40,23 }, 30));
 		Mix_PlayChannel(-1, Engine::Instance().m_mPlayerBullet, 0);
-	}
+	}*/
 
+	if (Engine::Instance().KeyDown(SDL_SCANCODE_RIGHT) && (Engine::Instance().m_bCanShoot == 6))
+	{
+		Engine::Instance().m_bCanShoot = 0;
+		Engine::Instance().setAngle(0);
+		Engine::Instance().m_vPBullets.push_back(new Bullet({ 0,0,40,23 }, { Engine::Instance().m_player->GetDstP()->x ,Engine::Instance().m_player->GetDstP()->y  ,40,23 }, 30));
+		Mix_PlayChannel(-1, Engine::Instance().m_mPlayerBullet, 0);
+	}
+	if (Engine::Instance().KeyDown(SDL_SCANCODE_LEFT) && (Engine::Instance().m_bCanShoot == 4))
+	{
+		Engine::Instance().m_bCanShoot = 0;
+		Engine::Instance().setAngle(180);
+
+		Engine::Instance().m_vPBullets.push_back(new Bullet({ 0,0,40,23 }, { Engine::Instance().m_player->GetDstP()->x ,Engine::Instance().m_player->GetDstP()->y ,40,23 }, 30));
+		Mix_PlayChannel(-1, Engine::Instance().m_mPlayerBullet, 0);
+	}
+	if (Engine::Instance().KeyDown(SDL_SCANCODE_UP) && (Engine::Instance().m_bCanShoot == 8))
+	{
+		Engine::Instance().m_bCanShoot = 0;
+		Engine::Instance().setAngle(270);
+
+		Engine::Instance().m_vPBullets.push_back(new Bullet({ 0,0,40,23 }, { Engine::Instance().m_player->GetDstP()->x,Engine::Instance().m_player->GetDstP()->y ,40,23 }, 30));
+		Mix_PlayChannel(-1, Engine::Instance().m_mPlayerBullet, 0);
+	}
+	if (Engine::Instance().KeyDown(SDL_SCANCODE_DOWN) && (Engine::Instance().m_bCanShoot == 2))
+	{
+		Engine::Instance().m_bCanShoot = 0;
+		Engine::Instance().setAngle(90);
+
+		Engine::Instance().m_vPBullets.push_back(new Bullet({ 0,0,40,23 }, { Engine::Instance().m_player->GetDstP()->x ,Engine::Instance().m_player->GetDstP()->y ,40,23 }, 30));
+		Mix_PlayChannel(-1, Engine::Instance().m_mPlayerBullet, 0);
+	}
 
 
 }
@@ -165,7 +196,8 @@ void GameState::Update()
 	for (int i = 0; i < (int)Engine::Instance().m_vPBullets.size(); i++)
 	{
 		Engine::Instance().m_vPBullets[i]->Update();
-		if (Engine::Instance().m_vPBullets[i]->GetDstP()->x > WIDTH)
+		if (Engine::Instance().m_vPBullets[i]->GetDstP()->x > WIDTH || Engine::Instance().m_vPBullets[i]->GetDstP()->y > HEIGHT
+			|| Engine::Instance().m_vPBullets[i]->GetDstP()->x < 0 || Engine::Instance().m_vPBullets[i]->GetDstP()->y < 0)
 		{
 			delete Engine::Instance().m_vPBullets[i];
 			Engine::Instance().m_vPBullets[i] = nullptr;
@@ -198,7 +230,7 @@ void GameState::Render()
 	// Player bullets.	
 	for (int i = 0; i < (int)Engine::Instance().m_vPBullets.size(); i++)
 	{
-		SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTexturePB(), Engine::Instance().m_vPBullets[i]->GetSrcP(), Engine::Instance().m_vPBullets[i]->GetDstP());
+		SDL_RenderCopyEx(Engine::Instance().GetRenderer(), Engine::Instance().getTexturePB(), Engine::Instance().m_vPBullets[i]->GetSrcP(), Engine::Instance().m_vPBullets[i]->GetDstP(), Engine::Instance().m_vPBullets[i]->GetAngle(), nullptr, SDL_FLIP_NONE);
 		/*SDL_SetRenderDrawColor(m_pRenderer, 255, 255, 0, 128);
 		SDL_RenderFillRect(m_pRenderer, m_vPBullets[i]->GetDstP());*/
 	}
@@ -210,14 +242,7 @@ void GameState::Render()
 		SDL_RenderFillRect(m_pRenderer, m_vEnemies[i]->GetDstP());*/
 	}
 
-//	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE1());
-//	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE2());
-//	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE3());
 
-
-
-
-	//SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 255, 0, 255);
 
 	// If GameState != current state.
 	if (dynamic_cast<GameState*>(Engine::Instance().GetFSM().GetStates().back()))

@@ -38,6 +38,27 @@ public:
 	void Resume();
 };
 
+class GameState1 : public State
+{
+public:
+	GameState1();
+	void Enter();
+	void Update();
+	void Render();
+	void Exit();
+	void Resume();
+};
+class GameState2 : public State
+{
+public:
+	GameState2();
+	void Enter();
+	void Update();
+	void Render();
+	void Exit();
+	void Resume();
+};
+
 class TitleState : public State
 {
 private:

@@ -86,18 +86,19 @@ void GameState::Update()
 		Engine::Instance().GetFSM().ChangeState(new TitleState());
 	else if (Engine::Instance().m_playerDie)
 		Engine::Instance().GetFSM().ChangeState(new LoseState());
-	else if (Engine::Instance().m_playerWin)
-		Engine::Instance().GetFSM().ChangeState(new WinState());
+	else if (Engine::Instance().m_playerWinLevel1)
+		Engine::Instance().GetFSM().ChangeState(new GameState1());
+	
 
-	if (!Engine::Instance().m_playerDie && !Engine::Instance().m_playerWin)
+	if (!Engine::Instance().m_playerDie && !Engine::Instance().m_playerWinLevel1)
 	{
 	
 	if ((Engine::Instance().KeyDown(SDL_SCANCODE_W)) && Engine::Instance().m_player->GetDstP()->y > Engine::Instance().getSpeed())
 	{
-		Engine::Instance().m_bShootUp = true;
+		/*Engine::Instance().m_bShootUp = true;
 		Engine::Instance().m_bShootDown = false;
 		Engine::Instance().m_bShootRight = false;
-		Engine::Instance().m_bShootLeft = false;
+		Engine::Instance().m_bShootLeft = false;*/
 
 		Engine::Instance().setAngle(270);
 		if (Engine::Instance().m_player->GetDstP()->y > 248)
@@ -111,10 +112,10 @@ void GameState::Update()
 	}
 	if ((Engine::Instance().KeyDown(SDL_SCANCODE_S)) && Engine::Instance().m_player->GetDstP()->y < HEIGHT - Engine::Instance().m_player->GetDstP()->h - Engine::Instance().getSpeed())
 	{
-		Engine::Instance().m_bShootUp = false;
+	/*	Engine::Instance().m_bShootUp = false;
 		Engine::Instance().m_bShootDown = true;
 		Engine::Instance().m_bShootRight = false;
-		Engine::Instance().m_bShootLeft = false;
+		Engine::Instance().m_bShootLeft = false;*/
 
 		Engine::Instance().setAngle(90);
 		Engine::Instance().m_player->GetDstP()->y += Engine::Instance().getSpeed();
@@ -123,10 +124,10 @@ void GameState::Update()
 
 	if ((Engine::Instance().KeyDown(SDL_SCANCODE_A)) && Engine::Instance().m_player->GetDstP()->x > Engine::Instance().getSpeed())
 	{
-		Engine::Instance().m_bShootUp = false;
+		/*Engine::Instance().m_bShootUp = false;
 		Engine::Instance().m_bShootDown = false;
 		Engine::Instance().m_bShootRight = false;
-		Engine::Instance().m_bShootLeft = true;
+		Engine::Instance().m_bShootLeft = true;*/
 
 		Engine::Instance().setAngle(180);
 		Engine::Instance().m_player->GetDstP()->x -= Engine::Instance().getSpeed();
@@ -136,10 +137,10 @@ void GameState::Update()
 	//if (keyDown(SDL_SCANCODE_D) && g_dst.x< WIDTH-g_dst.w- g_iSpeed)
 	if ((Engine::Instance().KeyDown(SDL_SCANCODE_D)) && Engine::Instance().m_player->GetDstP()->x < WIDTH - Engine::Instance().m_player->GetDstP()->w)
 	{
-		Engine::Instance().m_bShootUp = false;
+		/*Engine::Instance().m_bShootUp = false;
 		Engine::Instance().m_bShootDown = false;
 		Engine::Instance().m_bShootRight = true;
-		Engine::Instance().m_bShootLeft = false;
+		Engine::Instance().m_bShootLeft = false;*/
 
 		Engine::Instance().setAngle(0);
 
@@ -172,8 +173,8 @@ void GameState::Update()
 		}
 	}
 	if (Engine::Instance().m_bPBNull) CleanVector<Bullet*>(Engine::Instance().m_vPBullets, Engine::Instance().m_bPBNull);
-	if (!Engine::Instance().m_playerDie && !Engine::Instance().m_playerWin)
-		Engine::Instance().CheckCollision();
+	if (!Engine::Instance().m_playerDie && !Engine::Instance().m_playerWinLevel1)
+		Engine::Instance().CheckCollision(1);
 }
 
 void GameState::Render()
@@ -230,11 +231,398 @@ void GameState::Exit()
 	Engine::Instance().m_player = nullptr;
 	Engine::Instance().m_vPBullets.clear();
 	Engine::Instance().m_vEnemies.clear();
+	//
 	//Mix_FreeMusic(Engine::Instance().m_mBgMusic);
 }
 
 void GameState::Resume() { cout << "Resuming Game..." << endl; }
 // End GameState.
+
+// Begin GameState1.
+GameState1::GameState1() {}
+
+void GameState1::Enter()
+{
+	cout << "Entering Game1..." << endl;
+	//{ width / 2 - m_pSrc.w / 2 - 300, height / 2 - m_pSrc.h / 2 + 50, m_pSrc.w, m_pSrc.h };
+	Engine::Instance().m_player = new Player({ 0,0,61,46 }, { WIDTH / 2 - 61 / 2 - 250, HEIGHT / 2 - 46 / 2 + 50,61,46 });
+	//introduce enemy
+	Engine::Instance().m_vEnemies.clear();
+	Engine::Instance().m_vEnemies.reserve(6);
+	//fix enemy
+	Engine::Instance().m_vEnemies.push_back(new Enemy({ 0,0,40,38 }, { 277,140,40,38 }));
+	Engine::Instance().m_vEnemies.push_back(new Enemy({ 0,0,40,38 }, { 667, 400,40,38 }));
+	Engine::Instance().m_vEnemies.push_back(new Enemy({ 0,0,40,38 }, { 350, 600,40,38 }));
+	Engine::Instance().m_vEnemies.push_back(new Enemy({ 0,0,40,38 }, { 567, 500,40,38 }));
+	//moving enemy
+	Engine::Instance().m_vEnemies.push_back(new Enemy({ 0,0,40,38 }, { 40, 115,40,38 },1));
+	Engine::Instance().m_vEnemies.push_back(new Enemy({ 0,0,40,38 }, { 770, 60,40,38 },2));
+	Engine::Instance().m_explosion = new Explosion({ 0,0,96,96 }, { 0,0,96,96 });
+	//Mix_PlayMusic(Engine::Instance().m_mBgMusic, -1);
+}
+
+void GameState1::Update()
+{
+	if (Engine::Instance().KeyDown(SDL_SCANCODE_P) == 1)
+		Engine::Instance().GetFSM().PushState(new PauseState());
+	else if (Engine::Instance().KeyDown(SDL_SCANCODE_X) == 1)
+		Engine::Instance().GetFSM().ChangeState(new TitleState());
+	else if (Engine::Instance().m_playerDie)
+		Engine::Instance().GetFSM().ChangeState(new LoseState());
+	else if (Engine::Instance().m_playerWinLevel2)
+		Engine::Instance().GetFSM().ChangeState(new GameState2());
+	////else if (Engine::Instance().m_playerWinFinal)
+	//	//Engine::Instance().GetFSM().ChangeState(new WinState());
+
+	if (!Engine::Instance().m_playerDie && !Engine::Instance().m_playerWinLevel2)
+	{
+
+		if ((Engine::Instance().KeyDown(SDL_SCANCODE_W)) && Engine::Instance().m_player->GetDstP()->y > Engine::Instance().getSpeed())
+		{
+			Engine::Instance().setAngle(270);
+			Engine::Instance().m_player->GetDstP()->y -= Engine::Instance().getSpeed();
+		}
+		if ((Engine::Instance().KeyDown(SDL_SCANCODE_S)) && Engine::Instance().m_player->GetDstP()->y < HEIGHT - Engine::Instance().m_player->GetDstP()->h - Engine::Instance().getSpeed())
+		{
+			Engine::Instance().setAngle(90);
+			Engine::Instance().m_player->GetDstP()->y += Engine::Instance().getSpeed();
+		}
+
+		if ((Engine::Instance().KeyDown(SDL_SCANCODE_A)) && Engine::Instance().m_player->GetDstP()->x > Engine::Instance().getSpeed())
+		{
+			Engine::Instance().setAngle(180);
+			Engine::Instance().m_player->GetDstP()->x -= Engine::Instance().getSpeed();
+		}
+		if ((Engine::Instance().KeyDown(SDL_SCANCODE_D)) && Engine::Instance().m_player->GetDstP()->x < WIDTH - Engine::Instance().m_player->GetDstP()->w)
+		{
+			Engine::Instance().setAngle(0);
+			Engine::Instance().m_player->GetDstP()->x += Engine::Instance().getSpeed();
+		}
+		//---------------------------------------------------------------------------------------SHOOTING----------------------------------------------------------------------------------//
+		if (Engine::Instance().KeyDown(SDL_SCANCODE_RIGHT) && (Engine::Instance().m_bCanShoot==6))
+		{			
+			Engine::Instance().m_bCanShoot = 0;
+			Engine::Instance().setAngle(0);
+			Engine::Instance().m_vPBullets.push_back(new Bullet({ 0,0,40,23 }, { Engine::Instance().m_player->GetDstP()->x ,Engine::Instance().m_player->GetDstP()->y  ,40,23 }, 30));
+			Mix_PlayChannel(-1, Engine::Instance().m_mPlayerBullet, 0);
+		}
+		if (Engine::Instance().KeyDown(SDL_SCANCODE_LEFT) && (Engine::Instance().m_bCanShoot==4))
+		{
+			Engine::Instance().m_bCanShoot = 0;
+			Engine::Instance().setAngle(180);
+
+			Engine::Instance().m_vPBullets.push_back(new Bullet({ 0,0,40,23 }, { Engine::Instance().m_player->GetDstP()->x ,Engine::Instance().m_player->GetDstP()->y ,40,23 }, 30));
+			Mix_PlayChannel(-1, Engine::Instance().m_mPlayerBullet, 0);
+		}
+		if (Engine::Instance().KeyDown(SDL_SCANCODE_UP) && (Engine::Instance().m_bCanShoot==8))
+		{
+			Engine::Instance().m_bCanShoot = 0;
+			Engine::Instance().setAngle(270);
+
+			Engine::Instance().m_vPBullets.push_back(new Bullet({ 0,0,40,23 }, { Engine::Instance().m_player->GetDstP()->x,Engine::Instance().m_player->GetDstP()->y ,40,23 }, 30));
+			Mix_PlayChannel(-1, Engine::Instance().m_mPlayerBullet, 0);
+		}
+		if (Engine::Instance().KeyDown(SDL_SCANCODE_DOWN) && (Engine::Instance().m_bCanShoot==2))
+		{
+			Engine::Instance().m_bCanShoot = 0;
+			Engine::Instance().setAngle(90);
+
+			Engine::Instance().m_vPBullets.push_back(new Bullet({ 0,0,40,23 }, { Engine::Instance().m_player->GetDstP()->x ,Engine::Instance().m_player->GetDstP()->y ,40,23 }, 30));
+			Mix_PlayChannel(-1, Engine::Instance().m_mPlayerBullet, 0);
+		}
+
+
+
+	}
+
+	// Update the bullets. Player's first.
+	for (int i = 0; i < (int)Engine::Instance().m_vPBullets.size(); i++)
+	{
+		Engine::Instance().m_vPBullets[i]->Update();
+		if (Engine::Instance().m_vPBullets[i]->GetDstP()->x > WIDTH || Engine::Instance().m_vPBullets[i]->GetDstP()->y > HEIGHT
+			|| Engine::Instance().m_vPBullets[i]->GetDstP()->x < 0|| Engine::Instance().m_vPBullets[i]->GetDstP()->y<0)
+		{
+			delete Engine::Instance().m_vPBullets[i];
+			Engine::Instance().m_vPBullets[i] = nullptr;
+			Engine::Instance().m_bPBNull = true;
+		}
+	}
+	// Update the enemy.
+	for (int i = 0; i < (int)Engine::Instance().m_vEnemies.size(); i++)
+	{
+		Engine::Instance().m_vEnemies[i]->Update();
+		if (Engine::Instance().m_vEnemies[i]->GetDstP()->x > WIDTH)
+		{
+			Engine::Instance().m_vEnemies[i]->GetDstP()->x = 0;
+		}
+		if (Engine::Instance().m_vEnemies[i]->GetDstP()->y > HEIGHT)
+		{
+			Engine::Instance().m_vEnemies[i]->GetDstP()->y = 0;
+		}
+	}
+	if (Engine::Instance().m_bPBNull) CleanVector<Bullet*>(Engine::Instance().m_vPBullets, Engine::Instance().m_bPBNull);
+	//if (Engine::Instance().m_bENull) CleanVector<Enemy*>(Engine::Instance().m_vEnemies, Engine::Instance().m_bENull);
+	if (!Engine::Instance().m_playerDie && !Engine::Instance().m_playerWinLevel2)
+		Engine::Instance().CheckCollision(2);
+}
+
+void GameState1::Render()
+{
+	//cout << "Rendering Game..." << endl;
+	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 0, 0, 255);
+	SDL_RenderClear(Engine::Instance().GetRenderer());
+	// Render stuff.
+	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTexture_bg1(), NULL, NULL);
+	// Player.
+	if (!Engine::Instance().m_playerDie)
+		SDL_RenderCopyEx(Engine::Instance().GetRenderer(), Engine::Instance().getTexturePR(), Engine::Instance().m_player->GetSrcP(), Engine::Instance().m_player->GetDstP(), Engine::Instance().getAngle(), nullptr, SDL_FLIP_NONE);
+	else
+	{
+		if (Engine::Instance().m_explosion->m_isAnimate) {
+			SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTextureExp(), Engine::Instance().m_explosion->GetSrcP(), Engine::Instance().m_explosion->GetDstP());
+			Engine::Instance().m_explosion->Animate1();
+
+		}
+	}
+	// Player bullets.	
+	for (int i = 0; i < (int)Engine::Instance().m_vPBullets.size(); i++)
+	{
+		//SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTexturePB(), Engine::Instance().m_vPBullets[i]->GetSrcP(), Engine::Instance().m_vPBullets[i]->GetDstP());
+		SDL_RenderCopyEx(Engine::Instance().GetRenderer(), Engine::Instance().getTexturePB(), Engine::Instance().m_vPBullets[i]->GetSrcP(), Engine::Instance().m_vPBullets[i]->GetDstP(), Engine::Instance().m_vPBullets[i]->GetAngle(), nullptr, SDL_FLIP_NONE);
+		/*SDL_SetRenderDrawColor(m_pRenderer, 255, 255, 0, 128);
+		SDL_RenderFillRect(m_pRenderer, m_vPBullets[i]->GetDstP());*/
+	}
+	// Enemies.
+	for (int i = 0; i < (int)Engine::Instance().m_vEnemies.size(); i++)
+	{
+		SDL_RenderCopyEx(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().m_vEnemies[i]->GetSrcP(), Engine::Instance().m_vEnemies[i]->GetDstP(), Engine::Instance().m_vEnemies[i]->GetAngle(), nullptr, SDL_FLIP_NONE);
+		/*SDL_SetRenderDrawColor(m_pRenderer, 255, 0, 0, 128);
+		SDL_RenderFillRect(m_pRenderer, m_vEnemies[i]->GetDstP());*/
+	}
+
+	//	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE1());
+	//	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE2());
+	//	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE3());
+
+
+
+
+		//SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 255, 0, 255);
+
+		// If GameState != current state.
+	if (dynamic_cast<GameState1*>(Engine::Instance().GetFSM().GetStates().back()))
+		State::Render();
+}
+
+void GameState1::Exit()
+{
+	cout << "Exiting Game..." << endl;
+	delete Engine::Instance().m_player;
+	Engine::Instance().m_player = nullptr;
+	Engine::Instance().m_vPBullets.clear();
+	Engine::Instance().m_vEnemies.clear();
+		//SDL_DestroyTexture(Engine::Instance().getTexture_bg1());
+	//Mix_FreeMusic(Engine::Instance().m_mBgMusic);
+}
+
+void GameState1::Resume() { cout << "Resuming Game..." << endl; }
+// End GameState1.
+
+
+
+// Begin GameState2.
+GameState2::GameState2() {}
+
+void GameState2::Enter()
+{
+	cout << "Entering Game2..." << endl;
+	//{ width / 2 - m_pSrc.w / 2 - 300, height / 2 - m_pSrc.h / 2 + 50, m_pSrc.w, m_pSrc.h };
+	Engine::Instance().m_player = new Player({ 0,0,61,46 }, { WIDTH / 2 - 61 / 2 - 250, HEIGHT / 2 - 46 / 2 + 50,61,46 });
+	//introduce enemy
+	Engine::Instance().m_vEnemies.clear();
+	Engine::Instance().m_vEnemies.reserve(6);
+	//fix enemy
+	Engine::Instance().m_vEnemies.push_back(new Enemy({ 0,0,40,38 }, { 277,140,40,38 }));
+	Engine::Instance().m_vEnemies.push_back(new Enemy({ 0,0,40,38 }, { 667, 400,40,38 }));
+	Engine::Instance().m_vEnemies.push_back(new Enemy({ 0,0,40,38 }, { 350, 600,40,38 }));
+	Engine::Instance().m_vEnemies.push_back(new Enemy({ 0,0,40,38 }, { 567, 500,40,38 }));
+	//moving enemy
+	Engine::Instance().m_vEnemies.push_back(new Enemy({ 0,0,40,38 }, { 40, 115,40,38 }, 1));
+	Engine::Instance().m_vEnemies.push_back(new Enemy({ 0,0,40,38 }, { 770, 60,40,38 }, 2));
+	Engine::Instance().m_vEnemies.push_back(new Enemy({ 0,0,40,38 }, { 340, 115,40,38 }, 1));
+	Engine::Instance().m_vEnemies.push_back(new Enemy({ 0,0,40,38 }, { 770, 260,40,38 }, 2));
+	Engine::Instance().m_vEnemies.push_back(new Enemy({ 0,0,40,38 }, { 570, 260,40,38 }, 2));
+	Engine::Instance().m_explosion = new Explosion({ 0,0,96,96 }, { 0,0,96,96 });
+	//Mix_PlayMusic(Engine::Instance().m_mBgMusic, -1);
+}
+
+void GameState2::Update()
+{
+	if (Engine::Instance().KeyDown(SDL_SCANCODE_P) == 1)
+		Engine::Instance().GetFSM().PushState(new PauseState());
+	else if (Engine::Instance().KeyDown(SDL_SCANCODE_X) == 1)
+		Engine::Instance().GetFSM().ChangeState(new TitleState());
+	else if (Engine::Instance().m_playerDie)
+		Engine::Instance().GetFSM().ChangeState(new LoseState());
+	else if (Engine::Instance().m_playerWinLevel3)
+		Engine::Instance().GetFSM().ChangeState(new WinState());
+	
+
+	if (!Engine::Instance().m_playerDie && !Engine::Instance().m_playerWinLevel3)
+	{
+
+		if ((Engine::Instance().KeyDown(SDL_SCANCODE_W)) && Engine::Instance().m_player->GetDstP()->y > Engine::Instance().getSpeed())
+		{
+			Engine::Instance().setAngle(270);
+			Engine::Instance().m_player->GetDstP()->y -= Engine::Instance().getSpeed();
+		}
+		if ((Engine::Instance().KeyDown(SDL_SCANCODE_S)) && Engine::Instance().m_player->GetDstP()->y < HEIGHT - Engine::Instance().m_player->GetDstP()->h - Engine::Instance().getSpeed())
+		{
+			Engine::Instance().setAngle(90);
+			Engine::Instance().m_player->GetDstP()->y += Engine::Instance().getSpeed();
+		}
+
+		if ((Engine::Instance().KeyDown(SDL_SCANCODE_A)) && Engine::Instance().m_player->GetDstP()->x > Engine::Instance().getSpeed())
+		{
+			Engine::Instance().setAngle(180);
+			Engine::Instance().m_player->GetDstP()->x -= Engine::Instance().getSpeed();
+		}
+		if ((Engine::Instance().KeyDown(SDL_SCANCODE_D)) && Engine::Instance().m_player->GetDstP()->x < WIDTH - Engine::Instance().m_player->GetDstP()->w)
+		{
+			Engine::Instance().setAngle(0);
+			Engine::Instance().m_player->GetDstP()->x += Engine::Instance().getSpeed();
+		}
+		//---------------------------------------------------------------------------------------SHOOTING----------------------------------------------------------------------------------//
+		if (Engine::Instance().KeyDown(SDL_SCANCODE_RIGHT) && (Engine::Instance().m_bCanShoot == 6))
+		{
+			Engine::Instance().m_bCanShoot = 0;
+			Engine::Instance().setAngle(0);
+			Engine::Instance().m_vPBullets.push_back(new Bullet({ 0,0,40,23 }, { Engine::Instance().m_player->GetDstP()->x ,Engine::Instance().m_player->GetDstP()->y  ,40,23 }, 30));
+			Mix_PlayChannel(-1, Engine::Instance().m_mPlayerBullet, 0);
+		}
+		if (Engine::Instance().KeyDown(SDL_SCANCODE_LEFT) && (Engine::Instance().m_bCanShoot == 4))
+		{
+			Engine::Instance().m_bCanShoot = 0;
+			Engine::Instance().setAngle(180);
+
+			Engine::Instance().m_vPBullets.push_back(new Bullet({ 0,0,40,23 }, { Engine::Instance().m_player->GetDstP()->x ,Engine::Instance().m_player->GetDstP()->y ,40,23 }, 30));
+			Mix_PlayChannel(-1, Engine::Instance().m_mPlayerBullet, 0);
+		}
+		if (Engine::Instance().KeyDown(SDL_SCANCODE_UP) && (Engine::Instance().m_bCanShoot == 8))
+		{
+			Engine::Instance().m_bCanShoot = 0;
+			Engine::Instance().setAngle(270);
+
+			Engine::Instance().m_vPBullets.push_back(new Bullet({ 0,0,40,23 }, { Engine::Instance().m_player->GetDstP()->x,Engine::Instance().m_player->GetDstP()->y ,40,23 }, 30));
+			Mix_PlayChannel(-1, Engine::Instance().m_mPlayerBullet, 0);
+		}
+		if (Engine::Instance().KeyDown(SDL_SCANCODE_DOWN) && (Engine::Instance().m_bCanShoot == 2))
+		{
+			Engine::Instance().m_bCanShoot = 0;
+			Engine::Instance().setAngle(90);
+
+			Engine::Instance().m_vPBullets.push_back(new Bullet({ 0,0,40,23 }, { Engine::Instance().m_player->GetDstP()->x ,Engine::Instance().m_player->GetDstP()->y ,40,23 }, 30));
+			Mix_PlayChannel(-1, Engine::Instance().m_mPlayerBullet, 0);
+		}
+
+
+
+	}
+
+	// Update the bullets. Player's first.
+	for (int i = 0; i < (int)Engine::Instance().m_vPBullets.size(); i++)
+	{
+		Engine::Instance().m_vPBullets[i]->Update();
+		if (Engine::Instance().m_vPBullets[i]->GetDstP()->x > WIDTH || Engine::Instance().m_vPBullets[i]->GetDstP()->y > HEIGHT
+			|| Engine::Instance().m_vPBullets[i]->GetDstP()->x < 0 || Engine::Instance().m_vPBullets[i]->GetDstP()->y < 0)
+		{
+			delete Engine::Instance().m_vPBullets[i];
+			Engine::Instance().m_vPBullets[i] = nullptr;
+			Engine::Instance().m_bPBNull = true;
+		}
+	}
+	// Update the enemy.
+	for (int i = 0; i < (int)Engine::Instance().m_vEnemies.size(); i++)
+	{
+		Engine::Instance().m_vEnemies[i]->Update();
+		if (Engine::Instance().m_vEnemies[i]->GetDstP()->x > WIDTH)
+		{
+			Engine::Instance().m_vEnemies[i]->GetDstP()->x = 0;
+		}
+		if (Engine::Instance().m_vEnemies[i]->GetDstP()->y > HEIGHT)
+		{
+			Engine::Instance().m_vEnemies[i]->GetDstP()->y = 0;
+		}
+	}
+	if (Engine::Instance().m_bPBNull) CleanVector<Bullet*>(Engine::Instance().m_vPBullets, Engine::Instance().m_bPBNull);
+	//if (Engine::Instance().m_bENull) CleanVector<Enemy*>(Engine::Instance().m_vEnemies, Engine::Instance().m_bENull);
+	if (!Engine::Instance().m_playerDie && !Engine::Instance().m_playerWinLevel3)
+		Engine::Instance().CheckCollision(3);
+}
+
+void GameState2::Render()
+{
+	//cout << "Rendering Game..." << endl;
+	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 0, 0, 255);
+	SDL_RenderClear(Engine::Instance().GetRenderer());
+	// Render stuff.
+	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTexture_bg2(), NULL, NULL);
+	// Player.
+	if (!Engine::Instance().m_playerDie)
+		SDL_RenderCopyEx(Engine::Instance().GetRenderer(), Engine::Instance().getTexturePR(), Engine::Instance().m_player->GetSrcP(), Engine::Instance().m_player->GetDstP(), Engine::Instance().getAngle(), nullptr, SDL_FLIP_NONE);
+	else
+	{
+		if (Engine::Instance().m_explosion->m_isAnimate) {
+			SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTextureExp(), Engine::Instance().m_explosion->GetSrcP(), Engine::Instance().m_explosion->GetDstP());
+			Engine::Instance().m_explosion->Animate1();
+
+		}
+	}
+	// Player bullets.	
+	for (int i = 0; i < (int)Engine::Instance().m_vPBullets.size(); i++)
+	{
+		//SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTexturePB(), Engine::Instance().m_vPBullets[i]->GetSrcP(), Engine::Instance().m_vPBullets[i]->GetDstP());
+		SDL_RenderCopyEx(Engine::Instance().GetRenderer(), Engine::Instance().getTexturePB(), Engine::Instance().m_vPBullets[i]->GetSrcP(), Engine::Instance().m_vPBullets[i]->GetDstP(), Engine::Instance().m_vPBullets[i]->GetAngle(), nullptr, SDL_FLIP_NONE);
+		/*SDL_SetRenderDrawColor(m_pRenderer, 255, 255, 0, 128);
+		SDL_RenderFillRect(m_pRenderer, m_vPBullets[i]->GetDstP());*/
+	}
+	// Enemies.
+	for (int i = 0; i < (int)Engine::Instance().m_vEnemies.size(); i++)
+	{
+		SDL_RenderCopyEx(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().m_vEnemies[i]->GetSrcP(), Engine::Instance().m_vEnemies[i]->GetDstP(), Engine::Instance().m_vEnemies[i]->GetAngle(), nullptr, SDL_FLIP_NONE);
+		/*SDL_SetRenderDrawColor(m_pRenderer, 255, 0, 0, 128);
+		SDL_RenderFillRect(m_pRenderer, m_vEnemies[i]->GetDstP());*/
+	}
+
+	//	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE1());
+	//	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE2());
+	//	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTextureE1(), Engine::Instance().getSrcE1(), Engine::Instance().getDstE3());
+
+
+
+
+		//SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 255, 0, 255);
+
+		// If GameState != current state.
+	if (dynamic_cast<GameState2*>(Engine::Instance().GetFSM().GetStates().back()))
+		State::Render();
+}
+
+void GameState2::Exit()
+{
+	cout << "Exiting Game..." << endl;
+	delete Engine::Instance().m_player;
+	Engine::Instance().m_player = nullptr;
+	Engine::Instance().m_vPBullets.clear();
+	Engine::Instance().m_vEnemies.clear(); 
+	//	SDL_DestroyTexture(Engine::Instance().getTexture_bg2());
+	//Mix_FreeMusic(Engine::Instance().m_mBgMusic);
+}
+
+void GameState2::Resume() { cout << "Resuming Game..." << endl; }
+// End GameState2.
+
+
 
 // Begin TitleState.
 TitleState::TitleState() {
@@ -250,7 +638,10 @@ void TitleState::Enter()
 	//reset player,enemy for after lose
 	Engine::Instance().m_playerDie = false;
 	//reset score in title state
-	Engine::Instance().m_playerWin = false;
+	Engine::Instance().m_playerWinFinal = false;
+	Engine::Instance().m_playerWinLevel1 = false;
+	Engine::Instance().m_playerWinLevel2 = false;
+	Engine::Instance().m_playerWinLevel3 = false;
 	/*Engine::Instance().m_iESpawn = 0;
 	Engine::Instance().m_iESpawnMax = 60;*/
 	Engine::Instance().texW = 600;

@@ -33,7 +33,8 @@ private: // Properties.
 	SDL_Texture* m_pTextureE1;
 	SDL_Texture* m_pTextureExp;
 	SDL_Texture* m_pTexture_bg;
-
+	SDL_Texture* m_pTexture_bg1;
+	SDL_Texture* m_pTexture_bg2;
 
 
 	FSM* m_pFSM; // Pointer to the StateMachine object created dynamically.
@@ -65,12 +66,10 @@ private: // Methods.
 public:
 	bool m_bENull, // These three flags check if we need to clear the respective vectors of nullptrs.
 		m_bPBNull,		
-		m_bCanShoot, // This restricts the player from firing again unless they release the Spacebar.
-		m_bShootUp,
-		m_bShootDown,
-		m_bShootRight,
-		m_bShootLeft,
-		m_playerDie, m_playerWin;
+		
+		m_playerDie, m_playerWinLevel1, m_playerWinLevel2, m_playerWinLevel3, m_playerWinFinal;
+	int m_bCanShoot; // 0 for no shoot, 5 for spacebar, 8 for up, 2 for down, 6 for right, 4 for left
+		
 	Player* m_player;
 	vector<Enemy*> m_vEnemies;
 	vector<Bullet*> m_vPBullets;
@@ -100,7 +99,7 @@ public:
 	SDL_Point& GetMousePos();
 	bool GetMouseState(int idx);
 	void QuitGame();
-	void CheckCollision();
+	void CheckCollision(int level);
 	//void PrintMessage(string msg, bool shaded);
 	//SDL_Rect* getDst();
 	//SDL_Rect* getDstE1();
@@ -115,6 +114,8 @@ public:
 	SDL_Texture* getTexturePR();
 	SDL_Texture* getTexturePB();
 	SDL_Texture* getTexture_bg();
+	SDL_Texture* getTexture_bg1();
+	SDL_Texture* getTexture_bg2();
 	SDL_Texture* getTextureE1();
 	SDL_Texture* getTextureExp();
 	

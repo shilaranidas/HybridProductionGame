@@ -33,7 +33,10 @@ void AnimatedSprite::Animate()
 	m_rSrc.x = m_rSrc.w * m_iSprite;
 }
 
-Player::Player(SDL_Rect s, SDL_Rect d) : AnimatedSprite(90, 8, 4, s, d) { m_pCurrentScore = 0; m_pWinScore = 3; }
+Player::Player(SDL_Rect s, SDL_Rect d) : AnimatedSprite(90, 8, 4, s, d) { m_pCurrentScore = 0; m_pWinScoreLevel1 = 3;
+m_pWinScoreLevel2 = 6;
+m_pWinScoreLevel3 = 9;
+}
 Explosion::Explosion(SDL_Rect s, SDL_Rect d) : AnimatedSprite(0, 12, 4, s, d) {  }
 
 void Explosion::SetDstP(SDL_Rect r)
@@ -59,63 +62,76 @@ void Explosion::Animate1()
 }
 
 Bullet::Bullet(SDL_Rect s, SDL_Rect d, int spd) :
-	Sprite(s, d), m_speed(spd), m_active(true) {}
+	Sprite(s, d), m_speed(spd), m_active(true) {
+	
+}
 
 void Bullet::Update()
 {
-	if (Engine::Instance().m_bShootUp == true)
+	if (Engine::Instance().m_bCanShoot == 5)
 	{
-		Engine::Instance().m_bShootDown = false;
+		m_rDst.x += m_speed;
+		m_angle = 0;
+	}
+	else if (Engine::Instance().m_bCanShoot == 8)
+	{
+		/*Engine::Instance().m_bShootDown = false;
 		Engine::Instance().m_bShootRight = false;
-		Engine::Instance().m_bShootLeft = false;
+		Engine::Instance().m_bShootLeft = false;*/
 
 		m_rDst.y -= m_speed;
+		m_angle = 270;
 	}
 
-	if (Engine::Instance().m_bShootDown == true)
+	else if (Engine::Instance().m_bCanShoot == 2)
 	{
-		Engine::Instance().m_bShootUp = false;
-		Engine::Instance().m_bShootRight = false;
-		Engine::Instance().m_bShootLeft = false;
-
+		
+		m_angle = 90;
 		m_rDst.y += m_speed;
 	}
 
-	if (Engine::Instance().m_bShootRight == true)
+	else if (Engine::Instance().m_bCanShoot == 6)
 	{
-		Engine::Instance().m_bShootUp = false;
-		Engine::Instance().m_bShootDown = false;
-		Engine::Instance().m_bShootLeft = false;
-
+		
+		m_angle = 0;
 		m_rDst.x += m_speed;
 	}
 
-	if (Engine::Instance().m_bShootLeft == true)
+	else if (Engine::Instance().m_bCanShoot == 4)
 	{
-		Engine::Instance().m_bShootDown = false;
-		Engine::Instance().m_bShootRight = false;
-		Engine::Instance().m_bShootUp = false;
-
+		
+		m_angle = 180;
 		m_rDst.x -= m_speed;
 	}
 }
 
 
-Enemy::Enemy(SDL_Rect s, SDL_Rect d) : AnimatedSprite(-90, 4, 4, s, d) {}
+Enemy::Enemy(SDL_Rect s, SDL_Rect d, int m) : AnimatedSprite(-90, 4, 4, s, d) {
+	moving = m; 
+	if (m == 1)
+		m_angle = 180;
+	else if (m == 2)
+		m_angle = 270;
+	else m_angle = 0;
+}
 
 Enemy::Enemy(SDL_Rect s, SDL_Rect d, vector<Bullet*>* bVec, Mix_Chunk* c, int fr) : AnimatedSprite(-90, 4, 4, s, d),
 m_pBulletVec(bVec), m_pPew(c), m_bulletTimer(0), m_timerMax(fr) {}
 
 void Enemy::Update()
 {
-	Animate();
-	m_rDst.x -= 3;
-	if (m_bulletTimer++ == m_timerMax)
+	//Animate();
+	if(moving==1)
+		m_rDst.x += 1;
+	else if (moving == 2)
+		m_rDst.y += 1;
+	
+	/*if (m_bulletTimer++ == m_timerMax)
 	{
 		m_bulletTimer = 0;
 		m_pBulletVec->push_back(new Bullet({ 160,100,14,14 }, { m_rDst.x,m_rDst.y - 28,14,14 }, -10));
 		Mix_PlayChannel(-1, m_pPew, 0);
-	}
+	}*/
 }
 
 

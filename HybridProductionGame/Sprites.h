@@ -37,7 +37,7 @@ class Player : public AnimatedSprite
 {
 
 public:
-	int m_pWinScore, m_pCurrentScore;
+	int m_pWinScoreLevel1, m_pWinScoreLevel2, m_pWinScoreLevel3, m_pCurrentScore;
 	Player(SDL_Rect s, SDL_Rect d);
 	// Add more members later.
 };
@@ -58,7 +58,8 @@ class Bullet : public Sprite
 private:
 	int m_speed;
 	bool m_active;
-public:
+	
+public:	
 	Bullet(SDL_Rect s, SDL_Rect d, int spd);
 	void Update();
 };
@@ -70,8 +71,10 @@ private:
 		m_timerMax; // Basically fire rate of bullets.
 	vector<Bullet*>* m_pBulletVec; // Pointer to the enemy bullet vector from Engine.
 	Mix_Chunk* m_pPew;
+	int moving; //0 for fixed, 1 for left to right, 2 for top to bottom
 public:
-	Enemy(SDL_Rect s, SDL_Rect d); // Default function params go in prototypes.
+	Enemy(SDL_Rect s, SDL_Rect d, int m=0); // Default function params go in prototypes.
+	
 	Enemy(SDL_Rect s, SDL_Rect d, vector<Bullet*>* bVec, Mix_Chunk* c, int fr = 120); 
 	void Update();
 	// Add more members later.

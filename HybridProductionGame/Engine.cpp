@@ -12,7 +12,9 @@ using namespace std;
 Engine::Engine()
 {
 	m_bRunning = false;
-	m_bCanShoot = true, m_playerDie = false;
+	m_bCanShoot = 5,
+		
+		m_playerDie = false;
 	m_iSpeed = 5;
 }
 Engine::~Engine() { delete m_pFSM; }
@@ -33,6 +35,8 @@ bool Engine::init(const char* title, int xpos, int ypos, int width, int height, 
 				if (IMG_Init(IMG_INIT_PNG))
 				{
 					m_pTexture_bg = IMG_LoadTexture(m_pRenderer, "bg.png");
+					m_pTexture_bg1 = IMG_LoadTexture(m_pRenderer, "level_2.png");
+					m_pTexture_bg2 = IMG_LoadTexture(m_pRenderer, "level_2.png");
 					//Player shtuff
 					m_pTexturePR = IMG_LoadTexture(m_pRenderer, "playerRight.png");
 					m_pTexturePB = IMG_LoadTexture(m_pRenderer, "bullet.png");
@@ -129,8 +133,17 @@ void Engine::handleEvents()
 			break;
 		case SDL_KEYUP:
 			if (event.key.keysym.sym == SDLK_SPACE)
-				m_bCanShoot = true;
-
+			{
+				m_bCanShoot = 5;
+			}
+			else if (event.key.keysym.sym == SDLK_UP)
+				m_bCanShoot = 8;
+			else if (event.key.keysym.sym == SDLK_DOWN)
+				m_bCanShoot = 2;
+			else if (event.key.keysym.sym == SDLK_LEFT)
+				m_bCanShoot = 4;
+			else if (event.key.keysym.sym == SDLK_RIGHT)
+				m_bCanShoot = 6;
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 			if (event.button.button >= 1 && event.button.button <= 3)
@@ -197,7 +210,9 @@ void Engine::clean()
 	SDL_DestroyTexture(m_pTexturePR);
 	SDL_DestroyTexture(m_pTexturePB);
 	SDL_DestroyTexture(m_pTextureE1);
-	SDL_DestroyTexture(m_pTexture_bg);
+	SDL_DestroyTexture(getTexture_bg());
+	SDL_DestroyTexture(getTexture_bg1());
+	SDL_DestroyTexture(getTexture_bg2());
 	SDL_DestroyTexture(m_pTitleText1);
 	SDL_DestroyTexture(m_pTitleText2);
 	
@@ -258,7 +273,7 @@ void Engine::QuitGame() { m_bRunning = false; }
 }*/
 
 
-void Engine::CheckCollision()
+void Engine::CheckCollision(int level)
 {
 	// Player vs. Enemy.
 	SDL_Rect p = { m_player->GetDstP()->x, m_player->GetDstP()->y, 61, 46 };
@@ -293,10 +308,30 @@ void Engine::CheckCollision()
 				m_vPBullets[i] = nullptr;
 				m_bENull = true;
 				m_bPBNull = true;
-				if (m_player->m_pCurrentScore == m_player->m_pWinScore)
+				if (level == 1)
 				{
-					m_playerWin = true;
+					if (m_player->m_pCurrentScore == m_player->m_pWinScoreLevel1)
+					{
+						m_playerWinLevel1 = true;
+						m_player->m_pCurrentScore = 0;
+					}
 				}
+				else if (level == 2)
+				{
+					if (m_player->m_pCurrentScore == m_player->m_pWinScoreLevel2)
+					{
+						m_playerWinLevel2 = true;
+						m_player->m_pCurrentScore = 0;						
+					}
+				}
+				else if (level == 3)
+				{
+					if (m_player->m_pCurrentScore == m_player->m_pWinScoreLevel3)
+					{
+						m_playerWinLevel3 = true;
+						m_player->m_pCurrentScore = 0;
+					}
+				}											
 				break;
 			}
 		}
@@ -383,6 +418,14 @@ SDL_Texture* Engine::getTextureExp()
 SDL_Texture* Engine::getTexture_bg()
 {
 	return m_pTexture_bg;
+}
+SDL_Texture* Engine::getTexture_bg1()
+{
+	return m_pTexture_bg1;
+}
+SDL_Texture* Engine::getTexture_bg2()
+{
+	return m_pTexture_bg2;
 }
 
 int Engine::getAngle()

@@ -25,7 +25,7 @@ class PlayButton : public Button
 private:
 	void Execute();
 public:
-	PlayButton(const char* s, SDL_Rect src, SDL_Rect dst, const char * text, int w, int h);
+	PlayButton(const char* s, SDL_Rect src, SDL_Rect dst, const char * text, int w , int h);
 };
 
 class ExitButton : public Button

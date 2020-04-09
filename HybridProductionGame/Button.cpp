@@ -64,14 +64,14 @@ void Button::Render()
 {
 	//m_rSrc.x = m_rSrc.w (int)m_state;
 	SDL_RenderCopy(Engine::Instance().GetRenderer(), m_pText, &m_rSrc, &m_rDst);
-	SDL_Color color = { 223, 149, 75 };	
+	SDL_Color color = { 40, 8, 0 };	
 	//int texW = 100;
 	//int texH = 30;
 	SDL_Rect m_fsrcrect;
 	SDL_Rect m_fdstrect;
 	m_fsrcrect = { 0,0,width,height };
-	m_fdstrect = { m_rDst.x + 100-width/2, m_rDst.y + 50, width, height };
-	TTF_SetFontOutline(Engine::Instance().m_font, 2);	
+	m_fdstrect = { m_rDst.x + 100-width/2, m_rDst.y + 24, width, height };
+	TTF_SetFontOutline(Engine::Instance().m_font, 1);	
 	Engine::Instance().m_surface = TTF_RenderText_Solid(Engine::Instance().m_font, m_btnText, color);
 	Engine::Instance().m_ftexture = SDL_CreateTextureFromSurface(Engine::Instance().GetRenderer(), Engine::Instance().m_surface);
 	SDL_QueryTexture(Engine::Instance().m_ftexture, NULL, NULL, &width, &height);

@@ -34,9 +34,11 @@ bool Engine::init(const char* title, int xpos, int ypos, int width, int height, 
 			{
 				if (IMG_Init(IMG_INIT_PNG))
 				{
-					m_pTexture_bg = IMG_LoadTexture(m_pRenderer, "bg.png");
+					m_pTexture_p = IMG_LoadTexture(m_pRenderer, "pause_bg.png");
+					m_pTexture_bg = IMG_LoadTexture(m_pRenderer, "level_1.png");
 					m_pTexture_bg1 = IMG_LoadTexture(m_pRenderer, "level_2.png");
 					m_pTexture_bg2 = IMG_LoadTexture(m_pRenderer, "level_2.png");
+					m_pTexture_bg3 = IMG_LoadTexture(m_pRenderer, "level_3.png");
 					//Player shtuff
 					m_pTexturePR = IMG_LoadTexture(m_pRenderer, "playerRight.png");
 					m_pTexturePB = IMG_LoadTexture(m_pRenderer, "bullet.png");
@@ -88,17 +90,6 @@ bool Engine::init(const char* title, int xpos, int ypos, int width, int height, 
 	m_fps = (Uint32)round((1 / (double)FPS) * 1000); // Sets FPS in milliseconds and rounds.
 	m_iKeystates = SDL_GetKeyboardState(nullptr);
 	// Create the sprite.
-	//m_pSrc = { 0, 0, 61, 46 };
-	//m_pDst = { width / 2 - m_pSrc.w / 2 - 300, height / 2 - m_pSrc.h / 2 + 50, m_pSrc.w, m_pSrc.h };
-
-	/*m_pSrcE1 = { 0, 0, 40, 38 };
-	m_pDstE1 = { 467, 503, m_pSrcE1.w, m_pSrcE1.h };
-
-	m_pSrcE2 = { 0, 0, 40, 38 };
-	m_pDstE2 = { 500, 328, m_pSrcE1.w, m_pSrcE1.h };
-
-	m_pSrcE3 = { 0, 0, 40, 38 };
-	m_pDstE3 = { 630, 439, m_pSrcE1.w, m_pSrcE1.h };*/
 
 	//added background music
 	//Mix_PlayMusic(m_mBgMusicTitle, -1);
@@ -349,50 +340,6 @@ void Engine::CheckCollision(int level)
 }
 
 
-//SDL_Rect* Engine::getDst()
-//{
-//	return &m_pDst;
-//}
-
-//Enemies DST
-//SDL_Rect* Engine::getDstE1()
-//{
-//	return &m_pDstE1;
-//}
-//
-//SDL_Rect* Engine::getDstE2()
-//{
-//	return &m_pDstE2;
-//}
-//
-//SDL_Rect* Engine::getDstE3()
-//{
-//	return &m_pDstE3;
-//}
-
-
-//void Engine::setDst(SDL_Rect& newDst)
-//{
-//	m_pDst = newDst;
-//}
-
-//SDL_Rect* Engine::getSrc()
-//{
-//	return &m_pSrc;
-//}
-
-// Enemiees
-//SDL_Rect* Engine::getSrcE1()
-//{
-//	return &m_pSrcE1;
-//}
-
-
-
-//void Engine::setSrc(SDL_Rect& newSrc)
-//{
-//	m_pSrc = newSrc;
-//}
 
 SDL_Texture* Engine::getTexturePR()
 {
@@ -413,7 +360,10 @@ SDL_Texture* Engine::getTextureExp()
 }
 
 
-
+SDL_Texture* Engine::getTexture_p()
+{
+	return m_pTexture_p;
+}
 SDL_Texture* Engine::getTexture_bg()
 {
 	return m_pTexture_bg;
@@ -425,6 +375,11 @@ SDL_Texture* Engine::getTexture_bg1()
 SDL_Texture* Engine::getTexture_bg2()
 {
 	return m_pTexture_bg2;
+}
+
+SDL_Texture* Engine::getTexture_bg3()
+{
+	return m_pTexture_bg3;
 }
 
 int Engine::getAngle()

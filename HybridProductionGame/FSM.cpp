@@ -4,7 +4,7 @@
 #include "Engine.h"
 #include "Utilities.h"
 #define BUTTON_W 200
-#define BUTTON_H 100
+#define BUTTON_H 70
 using namespace std;
 
 // Begin State. CTRL+M+H and CTRL+M+U to turn on/off collapsed code.
@@ -22,9 +22,9 @@ PauseState::PauseState() {}
 void PauseState::Enter()
 {
 	cout << "Entering Pause..." << endl;
-	m_vButtons.push_back(new ResumeButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 412,200,BUTTON_W,BUTTON_H }, "Resume", 100, 30));
+	m_vButtons.push_back(new ResumeButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 420, 270,BUTTON_W,BUTTON_H }, "Resume", 100, 30));
 	// This exit button has a different size but SAME function as the one in title.
-	m_vButtons.push_back(new ExitButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 412,400,BUTTON_W,BUTTON_H }, "Exit", 60, 30));
+	m_vButtons.push_back(new ExitButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 420 ,360,BUTTON_W,BUTTON_H }, "Exit", 60, 30));
 }
 
 void PauseState::Update()
@@ -38,9 +38,7 @@ void PauseState::Render()
 	//cout << "Rendering Pause..." << endl;
 	Engine::Instance().GetFSM().GetStates().front()->Render();
 	SDL_SetRenderDrawBlendMode(Engine::Instance().GetRenderer(), SDL_BLENDMODE_BLEND);
-	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 71, 57, 74, 250);
-	SDL_Rect rect = { 256, 128, 512, 512 };
-	SDL_RenderFillRect(Engine::Instance().GetRenderer(), &rect);
+	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTexture_p(), NULL, NULL);
 	for (int i = 0; i < (int)m_vButtons.size(); i++)
 		m_vButtons[i]->Render();
 	State::Render();
@@ -591,7 +589,7 @@ void GameState2::Render()
 	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 0, 0, 255);
 	SDL_RenderClear(Engine::Instance().GetRenderer());
 	// Render stuff.
-	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTexture_bg2(), NULL, NULL);
+	SDL_RenderCopy(Engine::Instance().GetRenderer(), Engine::Instance().getTexture_bg3(), NULL, NULL);
 	// Player.
 	if (!Engine::Instance().m_playerDie)
 		SDL_RenderCopyEx(Engine::Instance().GetRenderer(), Engine::Instance().getTexturePR(), Engine::Instance().m_player->GetSrcP(), Engine::Instance().m_player->GetDstP(), Engine::Instance().getAngle(), nullptr, SDL_FLIP_NONE);
@@ -669,13 +667,13 @@ void TitleState::Enter()
 	Engine::Instance().m_playerWinLevel3 = false;
 	/*Engine::Instance().m_iESpawn = 0;
 	Engine::Instance().m_iESpawnMax = 60;*/
-	Engine::Instance().texW = 600;
+	Engine::Instance().texW = 300;
 	Engine::Instance().texH = 50;
 	Engine::Instance().m_fsrcrect = { 0,0,Engine::Instance().texW,Engine::Instance().texH };
 	Engine::Instance().m_fdstrect = { 200, 10, Engine::Instance().texW, Engine::Instance().texH };
-	m_vButtons.push_back(new PlayButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 312,300,BUTTON_W,BUTTON_H }, "Start Game", 100, 30));
+	m_vButtons.push_back(new PlayButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 360,300,BUTTON_W,BUTTON_H }, "Start Game", 100, 90));
 	// For the bind: what function, what instance, any parameters.
-	m_vButtons.push_back(new ExitButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 312,500,BUTTON_W,BUTTON_H }, "Exit", 60, 30));
+	m_vButtons.push_back(new ExitButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 360,450,BUTTON_W,BUTTON_H }, "Exit", 60, 30));
 }
 
 void TitleState::Update()
@@ -687,7 +685,7 @@ void TitleState::Update()
 void TitleState::Render()
 {
 	//cout << "Rendering Title..." << endl;
-	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 71, 57, 74, 255);
+	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 0, 0, 255);
 	SDL_RenderClear(Engine::Instance().GetRenderer());
 	for (int i = 0; i < (int)m_vButtons.size(); i++)
 		m_vButtons[i]->Render();
@@ -728,9 +726,9 @@ WinState::WinState() {}
 void WinState::Enter()
 {
 	cout << "Entering Win..." << endl;
-	m_vButtons.push_back(new MainMenuButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 312,300,BUTTON_W,BUTTON_H }, "Main Menu", 100, 30));
+	m_vButtons.push_back(new MainMenuButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 360,300,BUTTON_W,BUTTON_H }, "Main Menu", 100, 30));
 	// For the bind: what function, what instance, any parameters.
-	m_vButtons.push_back(new ExitButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 312,500,BUTTON_W,BUTTON_H }, "Exit", 60, 30));
+	m_vButtons.push_back(new ExitButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 360,400,BUTTON_W,BUTTON_H }, "Exit", 60, 30));
 }
 
 void WinState::Update()
@@ -742,7 +740,7 @@ void WinState::Update()
 void WinState::Render()
 {
 	cout << "Rendering Win..." << endl;
-	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 72, 58, 75, 255);
+	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 0, 0, 255);
 	SDL_RenderClear(Engine::Instance().GetRenderer());
 
 
@@ -756,8 +754,8 @@ void WinState::Render()
 	//Engine::Instance().PrintMessage("   Y O U     W O N  !!", true);
 	string msg = "   Y O U     W O N  !!";
 	SDL_Color color = { 255, 255, 255 };
-	SDL_Color colorbg = { 72,58,75 };
-	TTF_SetFontOutline(Engine::Instance().m_font, 2);
+	SDL_Color colorbg = { 0, 0, 0 };
+	TTF_SetFontOutline(Engine::Instance().m_font, 1);
 	Engine::Instance().m_surface = TTF_RenderText_Shaded(Engine::Instance().m_font, msg.c_str(), color, colorbg);
 
 	Engine::Instance().m_ftexture = SDL_CreateTextureFromSurface(Engine::Instance().GetRenderer(), Engine::Instance().m_surface);
@@ -785,9 +783,9 @@ LoseState::LoseState() {}
 void LoseState::Enter()
 {
 	cout << "Entering Lose..." << endl;
-	m_vButtons.push_back(new MainMenuButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 312,300,BUTTON_W,BUTTON_H }, "Main Menu", 100, 30));
+	m_vButtons.push_back(new MainMenuButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 360,300, BUTTON_W,BUTTON_H }, "Main Menu", 100, 30));
 	// For the bind: what function, what instance, any parameters.
-	m_vButtons.push_back(new ExitButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 312,500,BUTTON_W,BUTTON_H }, "Exit", 60, 30));
+	m_vButtons.push_back(new ExitButton("btn.png", { 0,0,BUTTON_W,BUTTON_H }, { 360,400,BUTTON_W,BUTTON_H }, "Exit", 60, 30));
 }
 
 void LoseState::Update()
@@ -801,7 +799,7 @@ void LoseState::Render()
 	//cout << "Rendering Los..." << endl;	
 
 	//cout << "Rendering Title..." << endl;
-	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 72, 58, 75, 255);
+	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 0 , 0, 255);
 	SDL_RenderClear(Engine::Instance().GetRenderer());
 
 
@@ -815,8 +813,8 @@ void LoseState::Render()
 	//Engine::Instance().PrintMessage("   G A M E     O V E R    !!", true);
 	string msg = "   G A M E     O V E R    !!";
 	SDL_Color color = { 255, 255, 255 };
-	SDL_Color colorbg = { 72,58,75 };
-	TTF_SetFontOutline(Engine::Instance().m_font, 2);
+	SDL_Color colorbg = { 0, 0, 0 };
+	TTF_SetFontOutline(Engine::Instance().m_font, 1);
 	Engine::Instance().m_surface = TTF_RenderText_Shaded(Engine::Instance().m_font, msg.c_str(), color, colorbg);
 	
 	Engine::Instance().m_ftexture = SDL_CreateTextureFromSurface(Engine::Instance().GetRenderer(), Engine::Instance().m_surface);

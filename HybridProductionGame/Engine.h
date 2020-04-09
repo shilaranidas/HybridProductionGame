@@ -35,6 +35,9 @@ private: // Properties.
 	SDL_Texture* m_pTexture_bg;
 	SDL_Texture* m_pTexture_bg1;
 	SDL_Texture* m_pTexture_bg2;
+	SDL_Texture* m_pTexture_bg3;
+	SDL_Texture* m_pTexture_p;
+
 
 
 	FSM* m_pFSM; // Pointer to the StateMachine object created dynamically.
@@ -113,9 +116,11 @@ public:
 	//void setSrc(SDL_Rect& newSrc);
 	SDL_Texture* getTexturePR();
 	SDL_Texture* getTexturePB();
+	SDL_Texture* getTexture_p();
 	SDL_Texture* getTexture_bg();
 	SDL_Texture* getTexture_bg1();
 	SDL_Texture* getTexture_bg2();
+	SDL_Texture* getTexture_bg3();
 	SDL_Texture* getTextureE1();
 	SDL_Texture* getTextureExp();
 	
